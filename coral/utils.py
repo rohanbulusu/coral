@@ -41,5 +41,3 @@ class _HasProductMeta(type):
 class HasProduct(metaclass=_HasProductMeta):
 	...
 
-
-
