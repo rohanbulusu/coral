@@ -1,0 +1,5 @@
+setup.py
+coral.egg-info/PKG-INFO
+coral.egg-info/SOURCES.txt
+coral.egg-info/dependency_links.txt
+coral.egg-info/top_level.txt
