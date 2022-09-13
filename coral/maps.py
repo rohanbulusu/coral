@@ -48,3 +48,23 @@ class Function:
 				raise DomainError(f'Expected element of {domain}, not {arg}')
 		return self._func(*args)
 
+
+class BinaryOperations(Function):
+
+	@staticmethod
+	def is_binary_operation(candidate):
+		if not isinstance(candidate, Function):
+			return False
+		if num_args(candidate._func) != 2:
+			return False
+		return True
+
+	def __init__(self, _func, left_domain, right_domain):
+		super().__init__(self, _func, (left_domain, right_domain))
+		self.left_domain = left_domain
+		self.right_domain = right_domain
+	
+	def __call_(self, a, b):
+		return super().__call__(a, b)
+
+
