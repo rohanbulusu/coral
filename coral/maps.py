@@ -1,6 +1,7 @@
 
 from inspect import signature
 from collections.abc import Sequence
+from itertools import combinations
 
 from coralset import CoralSet, REALS, COMPLEX
 from utils import typename
@@ -49,7 +50,7 @@ class Function:
 		return self._func(*args)
 
 
-class BinaryOperations(Function):
+class BinaryOperation(Function):
 
 	@staticmethod
 	def is_binary_operation(candidate):
@@ -57,7 +58,23 @@ class BinaryOperations(Function):
 			return False
 		if num_args(candidate._func) != 2:
 			return False
+		if candidate.domain[0] != candidate.domain[1]:
+			return False
 		return True
+	
+	# TODO: Test this method
+	@staticmethod
+	def is_associative(candidate, *samples):
+		if not BinaryOperation.is_binary_operation(candidate):
+			return False
+		if not all(isinstance(sample, candidate.domain[0]) for sample in samples):
+			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
+		triples = list(combinations(samples, 3))
+		for a, b, c in triple:
+			if not candidate((candidate(a, b), c) == candidate(a, candidate(b, c)):
+				return False
+		return True
+		
 
 	def __init__(self, _func, left_domain, right_domain):
 		super().__init__(self, _func, (left_domain, right_domain))
