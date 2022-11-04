@@ -67,14 +67,29 @@ class BinaryOperation(Function):
 	def is_associative(candidate, *samples):
 		if not BinaryOperation.is_binary_operation(candidate):
 			return False
+		if len(samples) < 3:
+			raise ValueError('Expected at least three sample domain elements')
 		if not all(isinstance(sample, candidate.domain[0]) for sample in samples):
 			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
 		triples = list(combinations(samples, 3))
-		for a, b, c in triple:
-			if not candidate((candidate(a, b), c) == candidate(a, candidate(b, c)):
+		for a, b, c in triples:
+			if not candidate(candidate(a, b), c) == candidate(a, candidate(b, c)):
 				return False
 		return True
-		
+	
+	@staticmethod
+	def is_commutative(candidate, *samples):
+		if not BinaryOPeration.is_binary_operation(candidate):
+			raise TypeError(f'Expected BinaryOperation, not {typename(candidate)}')
+		if len(samples) < 2:
+			raise ValueError('Expected at least two sample domain elements')
+		if not all(isinstance(sample, candidate.domain[0]) for sample in samples):
+			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
+		pairs = list(combinations(samples, 2))
+		for a, b in pairs:
+			if not candidate(a, b) == candidate(b, c):
+				return False
+		return True
 
 	def __init__(self, _func, left_domain, right_domain):
 		super().__init__(self, _func, (left_domain, right_domain))
