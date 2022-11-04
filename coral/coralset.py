@@ -23,7 +23,7 @@ class CoralSet:
         # both sets are finite
         return set(*self._underlying) == set(*other._underlying)
 
-    def is_element(self, candidate):
+    def has_element(self, candidate):
         if self.is_infinite:
             for sub_set_like in self._underlying:
                 if isinstance(sub_set_like, type) and isinstance(candidate, sub_set_like):
@@ -47,5 +47,5 @@ class CoralSet:
 
 REALS = CoralSet(float) | CoralSet(int)
 COMPLEX = REALS | CoralSet(complex)
-NUMBERS = COMPLEX | COMPLEX
+NUMBERS = COMPLEX
 

@@ -2,6 +2,7 @@
 from utils import typename
 from coralset import CoralSet
 from maps import BinaryOperation
+from absal import is_identity
 
 # TODO: Test this class
 class Magma:
@@ -17,9 +18,9 @@ class Magma:
 # TODO: Test this class
 class Monoid(Magma):
 
-    def __init__(self, cset, identity, binop)
+    def __init__(self, cset, identity, binop):
         super().__init__(cset, binop)
-        if not cset.is_element(identity):
+        if not cset.has_element(identity):
             raise ValueError(f'Expected identity element {identity} to be contained in the underlying set {cset}')
         self.identity = identity
 
