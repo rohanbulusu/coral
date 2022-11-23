@@ -45,7 +45,7 @@ class Function:
 
 	def __call__(self, *args):
 		for arg, domain in zip(args, self.domain):
-			if not domain.is_element(arg):
+			if not domain.has_element(arg):
 				raise DomainError(f'Expected element of {domain}, not {arg}')
 		return self._func(*args)
 

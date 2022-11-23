@@ -14,46 +14,46 @@ class TestCoralSet:
         assert CoralSet(range(3))
         assert CoralSet(set(range(3)))
 
-    def test_is_element_integers(self):
+    def test_has_element_integers(self):
         integers = CoralSet(int)
-        assert integers.is_element(1)
-        assert integers.is_element(0)
-        assert integers.is_element(-1)
+        assert integers.has_element(1)
+        assert integers.has_element(0)
+        assert integers.has_element(-1)
 
     def test_non_elements_integers(self):
         integers = CoralSet(int)
-        assert not integers.is_element(0.1)
-        assert not integers.is_element(0.0)
-        assert not integers.is_element(-0.1)
-        assert not integers.is_element([1, 2, 3])
+        assert not integers.has_element(0.1)
+        assert not integers.has_element(0.0)
+        assert not integers.has_element(-0.1)
+        assert not integers.has_element([1, 2, 3])
 
-    def test_is_element_reals(self):
+    def test_has_element_reals(self):
         reals = CoralSet(float) | CoralSet(int)
-        assert reals.is_element(-1.2)
-        assert reals.is_element(-1)
-        assert reals.is_element(-1.0)
-        assert reals.is_element(0)
-        assert reals.is_element(0.0)
-        assert reals.is_element(1)
-        assert reals.is_element(1.0)
-        assert reals.is_element(1.2)
+        assert reals.has_element(-1.2)
+        assert reals.has_element(-1)
+        assert reals.has_element(-1.0)
+        assert reals.has_element(0)
+        assert reals.has_element(0.0)
+        assert reals.has_element(1)
+        assert reals.has_element(1.0)
+        assert reals.has_element(1.2)
 
     def test_non_elements_reals(self):
         reals = CoralSet(float)
-        assert not reals.is_element(1 + 2j)
-        assert not reals.is_element({'a': 1})
+        assert not reals.has_element(1 + 2j)
+        assert not reals.has_element({'a': 1})
 
-    def test_is_element_discrete_set(self):
+    def test_has_element_discrete_set(self):
         discrete = CoralSet((1, 2, 3))
-        assert discrete.is_element(1)
-        assert discrete.is_element(2)
-        assert discrete.is_element(3)
+        assert discrete.has_element(1)
+        assert discrete.has_element(2)
+        assert discrete.has_element(3)
 
     def test_non_elements_discrete_set(self):
         discrete = CoralSet((1, 2, 3))
-        assert not discrete.is_element(12)
-        assert not discrete.is_element(12 + 13j)
-        assert not discrete.is_element(range(2))
+        assert not discrete.has_element(12)
+        assert not discrete.has_element(12 + 13j)
+        assert not discrete.has_element(range(2))
 
     def test_infinite_set_equality(self):
         assert CoralSet(float) == CoralSet(float)

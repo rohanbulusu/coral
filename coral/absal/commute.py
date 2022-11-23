@@ -22,5 +22,6 @@ class Monoid(Magma):
         super().__init__(cset, binop)
         if not cset.has_element(identity):
             raise ValueError(f'Expected identity element {identity} to be contained in the underlying set {cset}')
+        
         self.identity = identity
 
