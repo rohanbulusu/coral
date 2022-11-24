@@ -76,5 +76,3 @@ class TestCoralSet:
     def test_same_same_union(self):
         assert CoralSet(float) | CoralSet(float) == CoralSet(float)
         assert CoralSet((1, 2, 3)) | CoralSet((1, 2, 3)) == CoralSet((1, 2, 3))
-
-
