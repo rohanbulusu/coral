@@ -4,7 +4,7 @@ from collections.abc import Sequence
 from itertools import combinations
 
 from coralset import CoralSet, REALS, COMPLEX
-from utils import typename
+from utils import typename, unique_choices
 
 
 def has_kwargs(_func):
@@ -26,6 +26,12 @@ def num_args(_func):
 
 
 class DomainError(ValueError):
+	...
+
+class AssociativityError(TypeError):
+	...
+
+class CommutativityError(TypeError):
 	...
 
 
@@ -69,34 +75,106 @@ class BinaryOperation(Function):
 			return False
 		if len(samples) < 3:
 			raise ValueError('Expected at least three sample domain elements')
-		if not all(isinstance(sample, candidate.domain[0]) for sample in samples):
+		if not all(candidate.domain[0].has_element(sample) for sample in samples):
 			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
 		triples = list(combinations(samples, 3))
 		for a, b, c in triples:
-			if not candidate(candidate(a, b), c) == candidate(a, candidate(b, c)):
+			if not candidate._func(candidate._func(a, b), c) == candidate._func(a, candidate._func(b, c)):
 				return False
 		return True
 	
 	@staticmethod
 	def is_commutative(candidate, *samples):
-		if not BinaryOPeration.is_binary_operation(candidate):
+		if not BinaryOperation.is_binary_operation(candidate):
 			raise TypeError(f'Expected BinaryOperation, not {typename(candidate)}')
 		if len(samples) < 2:
 			raise ValueError('Expected at least two sample domain elements')
-		if not all(isinstance(sample, candidate.domain[0]) for sample in samples):
+		if not all(candidate.domain[0].has_element(sample) for sample in samples):
 			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
 		pairs = list(combinations(samples, 2))
 		for a, b in pairs:
-			if not candidate(a, b) == candidate(b, c):
+			if not candidate._func(a, b) == candidate._func(b, a):
 				return False
 		return True
 
 	def __init__(self, _func, left_domain, right_domain):
-		super().__init__(self, _func, (left_domain, right_domain))
+		super().__init__(_func, (left_domain, right_domain))
 		self.left_domain = left_domain
 		self.right_domain = right_domain
 	
 	def __call_(self, a, b):
 		return super().__call__(a, b)
+
+
+class AssociativeOperation(BinaryOperation):
+
+	def __init__(self, _func, left_domain, right_domain):
+		super().__init__(_func, left_domain, right_domain)
+		self.cached_samples = set()
+		self.num_samples = 0
+
+	def __cache_sample(self, sample):
+		self.cached_samples.add(sample)
+		self.num_samples += 1
+
+	def __call__(self, a, b):
+		self.__cache_sample(a)
+		self.__cache_sample(b)
+		if self.num_samples >= 3:
+			if not BinaryOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
+				raise AssociativityError('Operation is not associative over the given domain')
+		return super().__call__(a, b)
+
+
+class CommutativeOperation(BinaryOperation):
+	
+	def __init__(self, _func, left_domain, right_domain):
+		super().__init__(_func, left_domain, right_domain)
+		self.cached_samples = set()
+		self.num_samples = 0
+
+	def __cache_sample(self, sample):
+		self.cached_samples.add(sample)
+		self.num_samples += 1
+
+	def __call__(self, a, b):
+		self.__cache_sample(a)
+		self.__cache_sample(b)
+		if self.num_samples >= 2:
+			if not BinaryOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
+				raise CommutativityError('Operation is not commutative over the given domain')
+		return super().__call__(a, b)
+
+
+# alias for CommutativeOperation
+class AbelianOperation(CommutativeOperation):
+	...
+
+
+# operation that's both associative and commutative
+class AbelianGroupOperation(BinaryOperation):
+
+	def __init__(self, _func, left_domain, right_domain):
+		super().__init__(_func, left_domain, right_domain)
+		self.cached_samples = set()
+		self.num_samples = 0
+
+	def __cache_sample(self, sample):
+		self.cached_samples.add(sample)
+		self.num_samples += 1
+
+	def __call__(self, a, b):
+		self.__cache_sample(a)
+		self.__cache_sample(b)
+		if self.num_samples >= 2:
+			if not BinaryOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
+				raise CommutativityError('Operation is not commutative over the given domain')
+		if self.num_samples >= 3:
+			if not BinaryOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
+				raise AssociativityError('Operation is not associative over the given domain')
+		return super().__call__(a, b)
+
+
+
 
 
