@@ -70,8 +70,7 @@ class BinaryOperation(Function):
 		if candidate.input_domains[0] != candidate.input_domains[1]:
 			return False
 		return True
-	
-	# TODO: Test this method
+
 	@staticmethod
 	def is_associative(candidate, *samples):
 		if not BinaryOperation.is_binary_operation(candidate):
@@ -132,9 +131,6 @@ class ClosedOperation(Function):
 		return result
 
 class AssociativeOperation(ClosedOperation):
-
-	def __init__(self, _func, domain):
-		super().__init__(_func, domain)
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
