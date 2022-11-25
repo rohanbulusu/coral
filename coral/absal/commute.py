@@ -53,5 +53,9 @@ class Quasigroup(Magma):
         super().__init__(cset, binop)
 
 
+class Loop(Quasigroup):
 
+    def __init__(self, cset, identity, binop: LatinSquareOperation):
+        super().__init__(cset, binop)
+        self.identity = validate_identity_element(cset, identity)
 
