@@ -167,23 +167,16 @@ class AbelianGroupOperation(ClosedOperation):
 
 	def __init__(self, _func, domain):
 		super().__init__(_func, domain)
-		self.cached_samples = set()
-		self.num_samples = 0
-
-	def __cache_sample(self, sample):
-		self.cached_samples.add(sample)
-		self.num_samples += 1
 
 	def __call__(self, a, b):
-		self.__cache_sample(a)
-		self.__cache_sample(b)
+		result = super().__call__(a, b)
 		if self.num_samples >= 2:
 			if not BinaryOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
 				raise CommutativityError('Operation is not commutative over the given domain')
 		if self.num_samples >= 3:
 			if not BinaryOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
 				raise AssociativityError('Operation is not associative over the given domain')
-		return super().__call__(a, b)
+		return result
 
 
 
