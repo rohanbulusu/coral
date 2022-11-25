@@ -114,10 +114,20 @@ class AssociativeOperation(ClosedOperation):
 
 class CommutativeOperation(ClosedOperation):
 
+	@staticmethod
+	def is_commutative(candidate, a, b):
+		if not isinstance(candidate, ClosedOperation):
+			return False
+		if not all(candidate.domain.has_element(sample) for sample in (a, b)):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		if not candidate._func(a, b) == candidate._func(b, a):
+			return False
+		return True
+
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 2:
-			if not BinaryOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
+			if not self.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
 				raise CommutativityError('Operation is not commutative over the given domain')
 		return result
 
