@@ -135,6 +135,11 @@ class AbelianOperation(CommutativeOperation):
 	...
 
 
+class InvertibleOperation(ClosedOperation):
+	# TODO: invertible operations
+	...
+
+
 # operation that's both associative and commutative
 class AbelianGroupOperation(ClosedOperation):
 
