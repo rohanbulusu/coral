@@ -105,48 +105,56 @@ class BinaryOperation(Function):
 		self.left_domain = left_domain
 		self.right_domain = right_domain
 	
-	def __call_(self, a, b):
+	def __call__(self, a, b):
 		return super().__call__(a, b)
 
 
-class AssociativeOperation(BinaryOperation):
+class ClosedOperation(Function):
 
-	def __init__(self, _func, left_domain, right_domain):
-		super().__init__(_func, left_domain, right_domain)
+	def __init__(self, _func, domain):
+		if not isinstance(domain, CoralSet):
+			raise TypeError(f'Expected CoralSet, not {typename(domain)}')
+		super().__init__(_func, (domain, domain))
+		self.domain = domain
 		self.cached_samples = set()
 		self.num_samples = 0
-
-	def __cache_sample(self, sample):
+		
+	def _cache_sample(self, sample):
 		self.cached_samples.add(sample)
 		self.num_samples += 1
 
 	def __call__(self, a, b):
-		self.__cache_sample(a)
-		self.__cache_sample(b)
+		self._cache_sample(a)
+		self._cache_sample(b)
+		result = super().__call__(a, b)
+		if not self.domain.has_element(result):
+			raise ClosureError(f'Operation output {result} is not in the target {self.domain}')
+		return result
+
+class AssociativeOperation(ClosedOperation):
+
+	def __init__(self, _func, domain):
+		super().__init__(_func, domain)
+
+	def __call__(self, a, b):
+		result = super().__call__(a, b)
 		if self.num_samples >= 3:
 			if not BinaryOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
 				raise AssociativityError('Operation is not associative over the given domain')
-		return super().__call__(a, b)
+		return result
 
 
-class CommutativeOperation(BinaryOperation):
+class CommutativeOperation(ClosedOperation):
 	
-	def __init__(self, _func, left_domain, right_domain):
-		super().__init__(_func, left_domain, right_domain)
-		self.cached_samples = set()
-		self.num_samples = 0
-
-	def __cache_sample(self, sample):
-		self.cached_samples.add(sample)
-		self.num_samples += 1
+	def __init__(self, _func, domain):
+		super().__init__(_func, domain)
 
 	def __call__(self, a, b):
-		self.__cache_sample(a)
-		self.__cache_sample(b)
+		result = super().__call__(a, b)
 		if self.num_samples >= 2:
 			if not BinaryOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
 				raise CommutativityError('Operation is not commutative over the given domain')
-		return super().__call__(a, b)
+		return result
 
 
 # alias for CommutativeOperation
