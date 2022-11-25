@@ -1,7 +1,7 @@
 
-from utils import typename
-from coralset import CoralSet
-from maps import BinaryOperation
+from coral.utils import typename
+from coral.coralset import CoralSet
+from coral.maps import BinaryOperation
 
 class Ring:
     ...

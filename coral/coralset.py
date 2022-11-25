@@ -1,5 +1,5 @@
 
-from utils import typename, chain
+from .utils import typename, chain
 
 
 class CoralSet:

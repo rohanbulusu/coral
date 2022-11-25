@@ -3,8 +3,8 @@ from inspect import signature
 from collections.abc import Sequence
 import itertools
 
-from coralset import CoralSet, REALS, COMPLEX
-from utils import typename, unique_choices
+from .coralset import CoralSet, REALS, COMPLEX
+from .utils import typename, unique_choices
 
 
 def has_kwargs(_func):

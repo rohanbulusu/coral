@@ -1,7 +1,7 @@
 
 from pytest import raises
 
-from maps import *
+from .maps import *
 
 
 class TestFunction:

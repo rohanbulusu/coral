@@ -1,5 +1,5 @@
 
-from coralset import *
+from .coralset import *
 
 
 class TestCoralSet:

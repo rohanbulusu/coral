@@ -1,8 +1,7 @@
 
-from utils import typename
-from coralset import CoralSet
-from maps import ClosedOperation, AssociativeOperation, LatinSquareOperation
-from absal import is_identity
+from coral.utils import typename
+from coral.coralset import CoralSet
+from coral.maps import ClosedOperation, AssociativeOperation, LatinSquareOperation
 
 
 def validate_identity_element(cset, candidate):
