@@ -1,7 +1,7 @@
 
 from utils import typename
 from coralset import CoralSet
-from maps import ClosedOperation, AssociativeOperation
+from maps import ClosedOperation, AssociativeOperation, LatinSquareOperation
 from absal import is_identity
 
 
@@ -40,6 +40,15 @@ class Semigroup(Magma):
         if not isinstance(binop, AssociativeOperation):
             raise TypeError(f'Expected an associative operation, not {typename(binop)}')
         super().__init__(cset, binop)
+
+
+class Quasigroup(Magma):
+
+    def __init__(self, cset, binop: ClosedOperation):
+        if not isinstance(binop, ClosedOperation):
+            raise TypeError(f'Expected a closed operation, not {typename(binop)}')
+        ...
+
 
 
 

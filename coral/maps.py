@@ -150,6 +150,16 @@ class AbelianGroupOperation(ClosedOperation):
 
 
 class LatinSquareOperation(ClosedOperation):
-	...
+
+	def satisfies_latin_square_property(self, a, b, all_samples):
+		# TODO: find a way to algorithmically identify the latin square property
+		return True
+	
+	def __call__(self, a, b):
+		result = super().__call__(a, b)
+		if self.num_samples >= 2:
+			if not self.satisfies_latin_square_property(*unique_choices(list(self.cached_samples), 2), self.cached_samples):
+				raise PropertyError('Operation fails to satisfy the Latin Square Property')
+		return result
 
 
