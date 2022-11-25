@@ -163,10 +163,10 @@ class AbelianOperation(CommutativeOperation):
 
 
 # operation that's both associative and commutative
-class AbelianGroupOperation(BinaryOperation):
+class AbelianGroupOperation(ClosedOperation):
 
-	def __init__(self, _func, left_domain, right_domain):
-		super().__init__(_func, left_domain, right_domain)
+	def __init__(self, _func, domain):
+		super().__init__(_func, domain)
 		self.cached_samples = set()
 		self.num_samples = 0
 
