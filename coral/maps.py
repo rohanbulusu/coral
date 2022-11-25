@@ -134,13 +134,27 @@ class AbelianOperation(CommutativeOperation):
 # operation that's both associative and commutative
 class AbelianGroupOperation(ClosedOperation):
 
+	def is_associative(self, a, b, c):
+		if not all(self.domain.has_element(sample) for sample in (a, b, c)):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
+			return False
+		return True
+
+	def is_commutative(self, a, b):
+		if not all(self.domain.has_element(sample) for sample in (a, b)):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		if not self._func(a, b) == self._func(b, a):
+			return False
+		return True
+
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 3:
-			if not AssociativeOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
+			if not self.is_associative(*unique_choices(list(self.cached_samples), 3)):
 				raise AssociativityError('Operation is not associative over the given domain')
 		if self.num_samples >= 2:
-			if not CommutativeOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
+			if not self.is_commutative(*unique_choices(list(self.cached_samples), 2)):
 				raise CommutativityError('Operation is not commutative over the given domain')
 		return result
 
