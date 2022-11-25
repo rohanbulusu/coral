@@ -142,15 +142,16 @@ class AbelianGroupOperation(ClosedOperation):
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
-		if self.num_samples >= 2:
-			if not BinaryOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
-				raise CommutativityError('Operation is not commutative over the given domain')
 		if self.num_samples >= 3:
-			if not BinaryOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
+			if not AssociativeOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
 				raise AssociativityError('Operation is not associative over the given domain')
+		if self.num_samples >= 2:
+			if not CommutativeOperation.is_commutative(self, *unique_choices(list(self.cached_samples), 2)):
+				raise CommutativityError('Operation is not commutative over the given domain')
 		return result
 
 
-
+class LatinSquareOperation(ClosedOperation):
+	...
 
 
