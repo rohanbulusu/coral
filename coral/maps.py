@@ -40,20 +40,20 @@ class CommutativityError(TypeError):
 
 class Function:
 
-	def __init__(self, _func, domain):
+	def __init__(self, _func, input_domains):
 		if not callable(_func):
 			raise TypeError(f'Expected Callable, not {typename(_func)}')
 		if has_kwargs(_func):
 			raise ValueError(f'Did not expect kwarg parameters to function')
-		if not isinstance(domain, Sequence):
+		if not (isinstance(input_domains, Sequence) and all(isinstance(d, CoralSet) for d in input_domains)):
 			raise TypeError(f'Expected Sequence of CoralSets, not {typename(_func)}')
-		if not num_args(_func) == len(domain):
-			raise TypeError(f'Must specify domain to the proper number of dimensions')
+		if not num_args(_func) == len(input_domains):
+			raise TypeError(f'Must specify input domains to the proper number of dimensions')
 		self._func = _func
-		self.domain = tuple(domain)
+		self.input_domains = tuple(input_domains)
 
 	def __call__(self, *args):
-		for arg, domain in zip(args, self.domain):
+		for arg, domain in zip(args, self.input_domains):
 			if not domain.has_element(arg):
 				raise DomainError(f'Expected element of {domain}, not {arg}')
 		return self._func(*args)
