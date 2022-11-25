@@ -93,11 +93,12 @@ class ClosedOperation(Function):
 			self.indempotents.add(b)
 		return result
 
-	def is_associative(self, a, b, c):
-		if not all(self.domain.has_element(sample) for sample in (a, b, c)):
+	def is_associative(self, samples):
+		if not all(self.domain.has_element(sample) for sample in samples):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
-		if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
-			return False
+		for a, b, c in itertools.permutations(samples, 3):
+			if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
+				return False
 		return True
 
 	def is_commutative(self, a, b):
@@ -113,7 +114,7 @@ class AssociativeOperation(ClosedOperation):
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 3:
-			if not self.is_associative(*unique_choices(list(self.cached_samples), 3)):
+			if not self.is_associative(self.cached_samples):
 				raise AssociativityError('Operation is not associative over the given domain')
 		return result
 
