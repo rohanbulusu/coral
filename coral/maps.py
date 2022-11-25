@@ -67,7 +67,7 @@ class BinaryOperation(Function):
 			return False
 		if num_args(candidate._func) != 2:
 			return False
-		if candidate.domain[0] != candidate.domain[1]:
+		if candidate.input_domains[0] != candidate.input_domains[1]:
 			return False
 		return True
 	
@@ -78,7 +78,7 @@ class BinaryOperation(Function):
 			return False
 		if len(samples) < 3:
 			raise ValueError('Expected at least three sample domain elements')
-		if not all(candidate.domain[0].has_element(sample) for sample in samples):
+		if not all(candidate.input_domains[0].has_element(sample) for sample in samples):
 			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
 		triples = list(combinations(samples, 3))
 		for a, b, c in triples:
@@ -92,7 +92,7 @@ class BinaryOperation(Function):
 			raise TypeError(f'Expected BinaryOperation, not {typename(candidate)}')
 		if len(samples) < 2:
 			raise ValueError('Expected at least two sample domain elements')
-		if not all(candidate.domain[0].has_element(sample) for sample in samples):
+		if not all(candidate.input_domains[0].has_element(sample) for sample in samples):
 			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
 		pairs = list(combinations(samples, 2))
 		for a, b in pairs:
