@@ -28,13 +28,16 @@ def num_args(_func):
 class DomainError(ValueError):
 	...
 
-class ClosureError(ValueError):
+class PropertyError(TypeError):
 	...
 
-class AssociativityError(TypeError):
+class ClosureError(PropertyError):
 	...
 
-class CommutativityError(TypeError):
+class AssociativityError(PropertyError):
+	...
+
+class CommutativityError(PropertyError):
 	...
 
 
