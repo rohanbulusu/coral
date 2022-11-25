@@ -70,20 +70,6 @@ class BinaryOperation(Function):
 		if candidate.input_domains[0] != candidate.input_domains[1]:
 			return False
 		return True
-
-	@staticmethod
-	def is_associative(candidate, *samples):
-		if not BinaryOperation.is_binary_operation(candidate):
-			return False
-		if len(samples) < 3:
-			raise ValueError('Expected at least three sample domain elements')
-		if not all(candidate.input_domains[0].has_element(sample) for sample in samples):
-			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
-		triples = list(combinations(samples, 3))
-		for a, b, c in triples:
-			if not candidate._func(candidate._func(a, b), c) == candidate._func(a, candidate._func(b, c)):
-				return False
-		return True
 	
 	@staticmethod
 	def is_commutative(candidate, *samples):
@@ -132,10 +118,20 @@ class ClosedOperation(Function):
 
 class AssociativeOperation(ClosedOperation):
 
+	@staticmethod
+	def is_associative(candidate, a, b, c):
+		if not isinstance(candidate, ClosedOperation):
+			return False
+		if not all(candidate.domain.has_element(sample) for sample in (a, b, c)):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		if not candidate._func(candidate._func(a, b), c) == candidate._func(a, candidate._func(b, c)):
+			return False
+		return True
+
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 3:
-			if not BinaryOperation.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
+			if not self.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
 				raise AssociativityError('Operation is not associative over the given domain')
 		return result
 
