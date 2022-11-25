@@ -101,11 +101,12 @@ class ClosedOperation(Function):
 				return False
 		return True
 
-	def is_commutative(self, a, b):
-		if not all(self.domain.has_element(sample) for sample in (a, b)):
+	def is_commutative(self, samples):
+		if not all(self.domain.has_element(sample) for sample in samples):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
-		if not self._func(a, b) == self._func(b, a):
-			return False
+		for a, b in itertools.permutations(samples, 2):
+			if not self._func(a, b) == self._func(b, a):
+				return False
 		return True
 
 
@@ -124,7 +125,7 @@ class CommutativeOperation(ClosedOperation):
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 2:
-			if not self.is_commutative(*unique_choices(list(self.cached_samples), 2)):
+			if not self.is_commutative(self.cached_samples):
 				raise CommutativityError('Operation is not commutative over the given domain')
 		return result
 
