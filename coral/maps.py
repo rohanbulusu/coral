@@ -94,20 +94,17 @@ class ClosedOperation(Function):
 
 class AssociativeOperation(ClosedOperation):
 
-	@staticmethod
-	def is_associative(candidate, a, b, c):
-		if not isinstance(candidate, ClosedOperation):
-			return False
-		if not all(candidate.domain.has_element(sample) for sample in (a, b, c)):
+	def is_associative(self, a, b, c):
+		if not all(self.domain.has_element(sample) for sample in (a, b, c)):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
-		if not candidate._func(candidate._func(a, b), c) == candidate._func(a, candidate._func(b, c)):
+		if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
 			return False
 		return True
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 3:
-			if not self.is_associative(self, *unique_choices(list(self.cached_samples), 3)):
+			if not self.is_associative(*unique_choices(list(self.cached_samples), 3)):
 				raise AssociativityError('Operation is not associative over the given domain')
 		return result
 
