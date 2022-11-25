@@ -141,24 +141,28 @@ class AbelianGroupOperation(ClosedOperation):
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 3:
-			if not self.is_associative(*unique_choices(list(self.cached_samples), 3)):
+			if not self.is_associative(self.cached_samples):
 				raise AssociativityError('Operation is not associative over the given domain')
 		if self.num_samples >= 2:
-			if not self.is_commutative(*unique_choices(list(self.cached_samples), 2)):
+			if not self.is_commutative(self.cached_samples):
 				raise CommutativityError('Operation is not commutative over the given domain')
 		return result
 
 
 class LatinSquareOperation(ClosedOperation):
 
-	def satisfies_latin_square_property(self, a, b, all_samples):
-		# TODO: find a way to algorithmically identify the latin square property
-		return True
+	def satisfies_latin_square_property(self, samples):
+		for a, b in itertools.permutations(samples, 2):
+			left_exists = any(self._func(s, a) == b for s in samples)
+			right_exists = any(self._func(a, s) == b for s in samples)
+			if left_exists and right_exists:
+				return True
+		return False
 	
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 2:
-			if not self.satisfies_latin_square_property(*unique_choices(list(self.cached_samples), 2), self.cached_samples):
+			if not self.satisfies_latin_square_property(self.cached_samples):
 				raise PropertyError('Operation fails to satisfy the Latin Square Property')
 		return result
 
