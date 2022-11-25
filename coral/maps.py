@@ -61,30 +61,6 @@ class Function:
 
 class BinaryOperation(Function):
 
-	@staticmethod
-	def is_binary_operation(candidate):
-		if not isinstance(candidate, Function):
-			return False
-		if num_args(candidate._func) != 2:
-			return False
-		if candidate.input_domains[0] != candidate.input_domains[1]:
-			return False
-		return True
-	
-	@staticmethod
-	def is_commutative(candidate, *samples):
-		if not BinaryOperation.is_binary_operation(candidate):
-			raise TypeError(f'Expected BinaryOperation, not {typename(candidate)}')
-		if len(samples) < 2:
-			raise ValueError('Expected at least two sample domain elements')
-		if not all(candidate.input_domains[0].has_element(sample) for sample in samples):
-			raise TypeError(f'Not all sample elements are in the binary operation\'s domain')
-		pairs = list(combinations(samples, 2))
-		for a, b in pairs:
-			if not candidate._func(a, b) == candidate._func(b, a):
-				return False
-		return True
-
 	def __init__(self, _func, left_domain, right_domain):
 		super().__init__(_func, (left_domain, right_domain))
 		self.left_domain = left_domain
