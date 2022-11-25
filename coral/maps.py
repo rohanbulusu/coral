@@ -87,6 +87,10 @@ class ClosedOperation(Function):
 		result = super().__call__(a, b)
 		if not self.domain.has_element(result):
 			raise ClosureError(f'Operation output {result} is not in the target {self.domain}')
+		if result == a:
+			self.indempotents.add(a)
+		if result == b:
+			self.indempotents.add(b)
 		return result
 
 	def is_associative(self, a, b, c):
