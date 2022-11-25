@@ -141,9 +141,6 @@ class AssociativeOperation(ClosedOperation):
 
 
 class CommutativeOperation(ClosedOperation):
-	
-	def __init__(self, _func, domain):
-		super().__init__(_func, domain)
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
@@ -160,9 +157,6 @@ class AbelianOperation(CommutativeOperation):
 
 # operation that's both associative and commutative
 class AbelianGroupOperation(ClosedOperation):
-
-	def __init__(self, _func, domain):
-		super().__init__(_func, domain)
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
