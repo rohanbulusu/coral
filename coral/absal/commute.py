@@ -29,7 +29,17 @@ class Monoid(UnitalMagma):
 
     def __init__(self, cset, identity, binop: AssociativeOperation):
         if not isinstance(binop, AssociativeOperation):
-            raise TypeError(f'Expected an associative operation, not {binop}')
+            raise TypeError(f'Expected an associative operation, not {typename(binop)}')
         super().__init__(cset, identity, binop)
         self.identity = identity
+
+
+class Semigroup(Magma):
+
+    def __init__(self, cset, binop: AssociativeOperation):
+        if not isinstance(binop, AssociativeOperation):
+            raise TypeError(f'Expected an associative operation, not {typename(binop)}')
+        super().__init__(cset, binop)
+
+
 
