@@ -5,6 +5,12 @@ from maps import ClosedOperation, AssociativeOperation, LatinSquareOperation
 from absal import is_identity
 
 
+def validate_identity_element(cset, candidate):
+    if not cset.has_element(candidate):
+        raise ValueError(f'Expected identity element {candidate} to be contained in {cset}')
+    return candidate
+
+
 class Magma:
 
     def __init__(self, cset, binop: ClosedOperation):
@@ -19,10 +25,8 @@ class Magma:
 class UnitalMagma(Magma):
 
     def __init__(self, cset, identity, binop: ClosedOperation):
-        if not cset.has_element(identity):
-            raise ValueError(f'Expected identity element {identity} to be contained in monoid\'s underlying set {cset}')
         super().__init__(cset, binop)
-        self.identity = identity    
+        self.identity = validate_identity_element(cset, identity)    
 
 
 class Monoid(UnitalMagma):
@@ -31,7 +35,6 @@ class Monoid(UnitalMagma):
         if not isinstance(binop, AssociativeOperation):
             raise TypeError(f'Expected an associative operation, not {typename(binop)}')
         super().__init__(cset, identity, binop)
-        self.identity = identity
 
 
 class Semigroup(Magma):
