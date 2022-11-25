@@ -71,6 +71,11 @@ class ClosedOperation(Function):
 		self.domain = domain
 		self.cached_samples = set()
 		self.num_samples = 0
+		self.indempotents = set()
+
+	@property
+	def is_indempotent(self):
+		return self.num_samples == len(self.indempotents)
 		
 	def _cache_sample(self, sample):
 		self.cached_samples.add(sample)
