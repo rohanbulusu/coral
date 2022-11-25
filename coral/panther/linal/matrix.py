@@ -1,7 +1,7 @@
 
 from collections.abc import Sequence
 
-from utils import typename, Number, HasSum, HasProduct
+from coral.utils import typename, Number, HasSum, HasProduct
 from .vector import Vector
 
 

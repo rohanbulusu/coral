@@ -1,5 +1,5 @@
 
-from utils import typename, Number, HasSum, HasProduct
+from coral.utils import typename, Number, HasSum, HasProduct
 
 
 class Vector:
