@@ -1,19 +1,19 @@
 
 from utils import typename
 from coralset import CoralSet
-from maps import BinaryOperation
+from maps import ClosedOperation, AssociativeOperation
 from absal import is_identity
 
-# TODO: Test this class
+
 class Magma:
 
-    def __init__(self, cset, binary_operation):
+    def __init__(self, cset, binop: ClosedOperation):
         if not isinstance(cset, CoralSet):
             raise TypeError(f'Expected CoralSet, not {typename(cset)}')
-        if not BinaryOperation.is_binary_operation(binary_operation):
-            raise TypeError(f'Expected a binary operation, not {binary_operation}')
+        if not isinstance(binop, ClosedOperation):
+            raise TypeError(f'Expected a closed operation, not {typename(binop)}')
         self.cset = cset
-        self.binop = binary_operation
+        self.binop = binop
 
 # TODO: Test this class
 class Monoid(Magma):
