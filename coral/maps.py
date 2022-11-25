@@ -1,7 +1,7 @@
 
 from inspect import signature
 from collections.abc import Sequence
-from itertools import combinations
+import itertools
 
 from coralset import CoralSet, REALS, COMPLEX
 from utils import typename, unique_choices
@@ -60,17 +60,6 @@ class Function:
 			if not domain.has_element(arg):
 				raise DomainError(f'Expected element of {domain}, not {arg}')
 		return self._func(*args)
-
-
-class BinaryOperation(Function):
-
-	def __init__(self, _func, left_domain, right_domain):
-		super().__init__(_func, (left_domain, right_domain))
-		self.left_domain = left_domain
-		self.right_domain = right_domain
-	
-	def __call__(self, a, b):
-		return super().__call__(a, b)
 
 
 class ClosedOperation(Function):
