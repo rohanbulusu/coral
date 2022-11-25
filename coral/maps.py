@@ -28,6 +28,9 @@ def num_args(_func):
 class DomainError(ValueError):
 	...
 
+class ClosureError(ValueError):
+	...
+
 class AssociativityError(TypeError):
 	...
 
