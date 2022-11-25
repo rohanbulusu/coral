@@ -92,14 +92,22 @@ class ClosedOperation(Function):
 			raise ClosureError(f'Operation output {result} is not in the target {self.domain}')
 		return result
 
-class AssociativeOperation(ClosedOperation):
-
 	def is_associative(self, a, b, c):
 		if not all(self.domain.has_element(sample) for sample in (a, b, c)):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
 		if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
 			return False
 		return True
+
+	def is_commutative(self, a, b):
+		if not all(self.domain.has_element(sample) for sample in (a, b)):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		if not self._func(a, b) == self._func(b, a):
+			return False
+		return True
+
+
+class AssociativeOperation(ClosedOperation):
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
@@ -110,13 +118,6 @@ class AssociativeOperation(ClosedOperation):
 
 
 class CommutativeOperation(ClosedOperation):
-
-	def is_commutative(self, a, b):
-		if not all(self.domain.has_element(sample) for sample in (a, b)):
-			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
-		if not self._func(a, b) == self._func(b, a):
-			return False
-		return True
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
@@ -133,20 +134,6 @@ class AbelianOperation(CommutativeOperation):
 
 # operation that's both associative and commutative
 class AbelianGroupOperation(ClosedOperation):
-
-	def is_associative(self, a, b, c):
-		if not all(self.domain.has_element(sample) for sample in (a, b, c)):
-			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
-		if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
-			return False
-		return True
-
-	def is_commutative(self, a, b):
-		if not all(self.domain.has_element(sample) for sample in (a, b)):
-			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
-		if not self._func(a, b) == self._func(b, a):
-			return False
-		return True
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
