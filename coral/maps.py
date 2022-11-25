@@ -79,7 +79,7 @@ class ClosedOperation(Function):
 		
 	def _cache_sample(self, sample):
 		self.cached_samples.add(sample)
-		self.num_samples += 1
+		self.num_samples = len(self.cached_samples)
 
 	def __call__(self, a, b):
 		self._cache_sample(a)
