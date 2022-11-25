@@ -47,10 +47,10 @@ class Semigroup(Magma):
 
 class Quasigroup(Magma):
 
-    def __init__(self, cset, binop: ClosedOperation):
-        if not isinstance(binop, ClosedOperation):
-            raise TypeError(f'Expected a closed operation, not {typename(binop)}')
-        ...
+    def __init__(self, cset, binop: LatinSquareOperation):
+        if not isinstance(binop, LatinSquareOperation):
+            raise TypeError(f'Expected an operation satisfying the latin square property, not {typename(binop)}')
+        super().__init__(cset, binop)
 
 
 
