@@ -15,13 +15,21 @@ class Magma:
         self.cset = cset
         self.binop = binop
 
-# TODO: Test this class
-class Monoid(Magma):
 
-    def __init__(self, cset, identity, binop):
-        super().__init__(cset, binop)
+class UnitalMagma(Magma):
+
+    def __init__(self, cset, identity, binop: ClosedOperation):
         if not cset.has_element(identity):
-            raise ValueError(f'Expected identity element {identity} to be contained in the underlying set {cset}')
-        
+            raise ValueError(f'Expected identity element {identity} to be contained in monoid\'s underlying set {cset}')
+        super().__init__(cset, binop)
+        self.identity = identity    
+
+
+class Monoid(UnitalMagma):
+
+    def __init__(self, cset, identity, binop: AssociativeOperation):
+        if not isinstance(binop, AssociativeOperation):
+            raise TypeError(f'Expected an associative operation, not {binop}')
+        super().__init__(cset, identity, binop)
         self.identity = identity
 
