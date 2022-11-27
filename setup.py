@@ -1,10 +1,9 @@
-
 from setuptools import find_packages, setup
 
 setup(
 	name='coral',
 	packages=find_packages(),
-	version='1.0',
+	version='1.1',
 	description='A mathematical computation and visualization package',
 	author='Rohan Bulusu',
 	author_email='rohanbulusu@gmail.com',

@@ -64,6 +64,10 @@ class Function:
 
 class ClosedOperation(Function):
 
+	ASSOCIATIVE = False
+	COMMUTATIVE = False
+	LATIN_SQUARE = False
+
 	def __init__(self, _func, domain):
 		if not isinstance(domain, CoralSet):
 			raise TypeError(f'Expected CoralSet, not {typename(domain)}')
@@ -110,7 +114,15 @@ class ClosedOperation(Function):
 		return True
 
 
-class AssociativeOperation(ClosedOperation):
+class AssociativeMeta(type):
+
+	def __instancecheck__(cls, instance):
+		return instance.ASSOCIATIVE
+
+
+class AssociativeOperation(ClosedOperation, metaclass=AssociativeMeta):
+
+	ASSOCIATIVE = True
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
@@ -120,7 +132,15 @@ class AssociativeOperation(ClosedOperation):
 		return result
 
 
-class CommutativeOperation(ClosedOperation):
+class CommutativeMeta(type):
+
+	def __instancecheck__(cls, instance):
+		return instance.COMMUTATIVE
+
+
+class CommutativeOperation(ClosedOperation, metaclass=CommutativeMeta):
+
+	COMMUTATIVE = True
 
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
@@ -143,6 +163,10 @@ class InvertibleOperation(ClosedOperation):
 # operation that's both associative and commutative
 class AbelianGroupOperation(ClosedOperation):
 
+	ASSOCIATIVE = True
+	COMMUTATIVE = True
+	LATIN_SQUARE = True
+
 	def __call__(self, a, b):
 		result = super().__call__(a, b)
 		if self.num_samples >= 3:
@@ -154,7 +178,15 @@ class AbelianGroupOperation(ClosedOperation):
 		return result
 
 
-class LatinSquareOperation(ClosedOperation):
+class LatinSquareMeta(type):
+
+	def __instancecheck__(cls, instance):
+		return instance.LATIN_SQUARE
+
+
+class LatinSquareOperation(ClosedOperation, metaclass=LatinSquareMeta):
+
+	LATIN_SQUARE = True
 
 	def satisfies_latin_square_property(self, samples):
 		for a, b in itertools.permutations(samples, 2):

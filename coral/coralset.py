@@ -5,6 +5,8 @@ from .utils import typename, chain
 class CoralSet:
 
     def __init__(self, *set_like):
+        if not all(all(hasattr(element, '__eq__') for element in sub_set_like) for sub_set_like in set_like if not isinstance(sub_set_like, type)):
+            raise TypeError('All set elements must have an equality measure')
         self.is_infinite = any(isinstance(sub_set_like, type) for sub_set_like in set_like)
         self._underlying = set_like if self.is_infinite else list(set_like)
 
@@ -45,7 +47,29 @@ class CoralSet:
         return self.__class__(*self._underlying, *other._underlying)
 
 
-REALS = CoralSet(float) | CoralSet(int)
+class PositiveRealsMeta(type):
+
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, (int, float)) and instance > 0
+
+
+class PositiveReals(metaclass=PositiveRealsMeta):
+    ...
+
+
+class RealNumbersMeta(type):
+
+    def __instancecheck__(cls, instance):
+        is_on_real_locus = isinstance(instance, complex) and instance.imag == 0
+        return isinstance(instance, (int, float)) or is_on_real_locus
+
+
+class Reals(metaclass=RealNumbersMeta):
+    ...
+
+
+REALS = CoralSet(Reals)
+POSITIVE_REALS = CoralSet(PositiveReals)
 COMPLEX = REALS | CoralSet(complex)
 NUMBERS = COMPLEX
 

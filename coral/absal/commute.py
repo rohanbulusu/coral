@@ -1,8 +1,7 @@
 
 from coral.utils import typename
 from coral.coralset import CoralSet
-from coral.maps import ClosedOperation, AssociativeOperation, LatinSquareOperation
-
+from coral.maps import PropertyError, ClosedOperation, AssociativeOperation, LatinSquareOperation
 
 def validate_identity_element(cset, candidate):
     if not cset.has_element(candidate):
@@ -20,12 +19,21 @@ class Magma:
         self.cset = cset
         self.binop = binop
 
+    def __call__(self, a, b):
+        return self.binop(a, b)
+
 
 class UnitalMagma(Magma):
 
     def __init__(self, cset, identity, binop: ClosedOperation):
         super().__init__(cset, binop)
-        self.identity = validate_identity_element(cset, identity)    
+        self.identity = validate_identity_element(cset, identity)
+
+    def __call__(self, a, b):
+        if a == self.identity or b == self.identity:
+            if not self.binop(a, b) == self.binop(b, a):
+                raise PropertyError(f'Identified identity element {self.identity} does not satisfy identity axioms')
+        return self.binop(a, b)
 
 
 class Monoid(UnitalMagma):
@@ -48,13 +56,14 @@ class Quasigroup(Magma):
 
     def __init__(self, cset, binop: LatinSquareOperation):
         if not isinstance(binop, LatinSquareOperation):
-            raise TypeError(f'Expected an operation satisfying the latin square property, not {typename(binop)}')
+            raise TypeError(f'Expected an operation satisfying the Latin Square property, not {typename(binop)}')
         super().__init__(cset, binop)
 
 
-class Loop(Quasigroup):
+class Loop(UnitalMagma):
 
     def __init__(self, cset, identity, binop: LatinSquareOperation):
-        super().__init__(cset, binop)
-        self.identity = validate_identity_element(cset, identity)
+        if not isinstance(binop, LatinSquareOperation):
+            raise TypeError(f'Expected an operation satisfying the Latin Square property, not {typename(binop)}')
+        super().__init__(cset, identity, binop)
 
