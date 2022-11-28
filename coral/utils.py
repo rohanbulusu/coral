@@ -14,18 +14,6 @@ def chain(*iterators):
 
 	return tuple(_generator_chain(*iterators))
 
-def unique_choices(samples, num_choices):
-	if not isinstance(samples, Iterable):
-		raise TypeError(f'Cannot select from {typename(samples)}')
-	if num_choices > len(samples):
-		raise ValueError(f'Cannot select {num_choices} item(s) from a {len(samples)}-element sequence')
-	if num_choices == len(samples):
-		return tuple(samples)
-	choices = [samples[0]]
-	while len(choices) != num_choices:
-		choices.append(samples[len(choices)])
-	return choices
-
 
 class _NumberMeta(type):
 

@@ -5,13 +5,13 @@ from cmath import log as complex_log
 from cmath import sqrt as complex_sqrt
 
 from coral.coralset import REALS, POSITIVE_REALS, COMPLEX
-from coral.maps import PropertyError, ClosureError, ClosedOperation, CommutativeOperation, AbelianGroupOperation
+from coral.maps import PropertyError, ClosureError, ClosedOperation, CommutativeOperation, AssociativeAbelianOperation, addition_mod
 from .commute import *
 
 
 @fixture
 def addition():
-	return AbelianGroupOperation(lambda a, b: a + b, REALS)
+	return AssociativeAbelianOperation(lambda a, b: a + b, REALS)
 
 @fixture
 def commutative_only():
@@ -47,6 +47,18 @@ class TestMagma:
 		with raises(ClosureError):
 			assert magma(-1, 0) == 1j
 
+	def test_membership_via_in_keyword(self, addition):
+		assert 1 in Magma(CoralSet((1, 2)), addition)
+		assert 1 + 2j in Magma(CoralSet((1 + 1j, 1 + 2j)), addition)
+
+		assert 0 in Magma(CoralSet(int), addition)
+		assert 1j in Magma(CoralSet(complex), addition)
+		assert 0.01 in Magma(CoralSet(float), addition)
+
+	def test_magma_equality(self, addition):
+		assert Magma(CoralSet((0, 1, 2)), addition_mod(3)) == Magma(CoralSet((0, 1, 2)), addition_mod(3))
+		assert Magma(REALS, addition) == Magma(REALS, addition)
+
 
 class TestUnitalMagma:
 
@@ -63,6 +75,14 @@ class TestUnitalMagma:
 		umagma = UnitalMagma(POSITIVE_REALS, 1, positive_division)
 		with raises(PropertyError):
 			assert umagma(2, 1) == 2
+
+	def test_membership_via_in_keyword(self, addition):
+		assert 0 in UnitalMagma(CoralSet((0, 1, 2)), 0, addition_mod(3))
+		assert 0 in UnitalMagma(REALS, 0, addition)
+
+	def test_unital_magma_equality(self, addition):
+		assert UnitalMagma(CoralSet((0, 1, 2)), 0, addition_mod(3)) == UnitalMagma(CoralSet((0, 1, 2)), 0, addition_mod(3))
+		assert UnitalMagma(REALS, 0, addition) == UnitalMagma(REALS, 0, addition)
 
 
 class TestMonoid:
@@ -82,6 +102,14 @@ class TestMonoid:
 		assert monoid(1, 2) == 3
 		assert monoid(3, 4) == 7
 
+	def test_membership_via_in_keyword(self, addition):
+		assert 0 in Monoid(CoralSet((0, 1, 2)), 0, addition_mod(3))
+		assert 0 in Monoid(REALS, 0, addition)
+
+	def test_monoid_equality(self, addition):
+		assert Monoid(CoralSet((0, 1, 2)), 0, addition_mod(3)) == Monoid(CoralSet((0, 1, 2)), 0, addition_mod(3))
+		assert Monoid(REALS, 0, addition) == Monoid(REALS, 0, addition)
+
 
 class TestSemigroup:
 
@@ -98,6 +126,14 @@ class TestSemigroup:
 		assert semi(1, 2) == 3
 		assert semi(3, 4) == 7
 
+	def test_membership_via_in_keyword(self, addition):
+		assert 0 in Semigroup(CoralSet((0, 1, 2)), addition_mod(3))
+		assert 0 in Semigroup(REALS, addition)
+
+	def test_semigroup_equality(self, addition):
+		assert Semigroup(CoralSet((0, 1, 2)), addition_mod(3)) == Semigroup(CoralSet((0, 1, 2)), addition_mod(3))
+		assert Semigroup(REALS, addition) == Semigroup(REALS, addition)
+
 
 class TestQuasigroup:
 
@@ -113,6 +149,14 @@ class TestQuasigroup:
 		quasi = Quasigroup(REALS, addition)
 		assert quasi(1, 2) == 3
 		assert quasi(3, 4) == 7
+
+	def test_membership_via_in_keyword(self, addition):
+		assert 0 in Quasigroup(CoralSet((0, 1, 2)), addition_mod(3))
+		assert 0 in Quasigroup(REALS, addition)
+
+	def test_quasigroup_equality(self, addition):
+		assert Quasigroup(CoralSet((0, 1, 2)), addition_mod(3)) == Quasigroup(CoralSet((0, 1, 2)), addition_mod(3))
+		assert Quasigroup(REALS, addition) == Quasigroup(REALS, addition)
 
 
 class TestLoop:
@@ -131,4 +175,12 @@ class TestLoop:
 		loop = Loop(REALS, 0, addition)
 		assert loop(1, 2) == 3
 		assert loop(3, 5) == 8
+
+	def test_membership_via_in_keyword(self, addition):
+		assert 0 in Loop(CoralSet((0, 1, 2)), 0, addition_mod(3))
+		assert 0 in Loop(REALS, 0, addition)
+
+	def test_loop_equality(self, addition):
+		assert Loop(CoralSet((0, 1, 2)), 0, addition_mod(3)) == Loop(CoralSet((0, 1, 2)), 0, addition_mod(3))
+		assert Loop(REALS, 0, addition) == Loop(REALS, 0, addition)
 

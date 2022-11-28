@@ -8,6 +8,9 @@ class TestCoralSet:
         assert CoralSet(int)
         assert CoralSet(float)
 
+    def test_accepts_sets(self):
+        assert CoralSet(set([1, 2, 3]))
+
     def test_accepts_discrete_sequences(self):
         assert CoralSet((1, 2, 3))
         assert CoralSet([1, 2, 3])
@@ -63,6 +66,9 @@ class TestCoralSet:
         assert CoralSet((1, 2, 3)) == CoralSet((3, 2, 1))
         assert CoralSet((1, 2, 3)) == CoralSet((3, 3, 2, 1))
 
+        assert CoralSet(set([1, 2, 3])) == CoralSet((1, 2, 3))
+        assert CoralSet([1, 2, 3]) == CoralSet((1, 2, 3))
+
     def test_allows_infinite_infinite_union(self):
         assert CoralSet(float) | CoralSet(int)
 
@@ -76,3 +82,11 @@ class TestCoralSet:
     def test_same_same_union(self):
         assert CoralSet(float) | CoralSet(float) == CoralSet(float)
         assert CoralSet((1, 2, 3)) | CoralSet((1, 2, 3)) == CoralSet((1, 2, 3))
+
+    def test_membership_via_in_keyword(self):
+        assert 1 in CoralSet((1, 2))
+        assert 1 + 2j in CoralSet((1 + 1j, 1 + 2j))
+
+        assert 0 in CoralSet(int)
+        assert 1j in CoralSet(complex)
+        assert 0.01 in CoralSet(float)

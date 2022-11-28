@@ -4,7 +4,7 @@ from collections.abc import Sequence
 import itertools
 
 from .coralset import CoralSet, REALS, COMPLEX
-from .utils import typename, unique_choices
+from .utils import typename
 
 
 def has_kwargs(_func):
@@ -40,6 +40,9 @@ class AssociativityError(PropertyError):
 class CommutativityError(PropertyError):
 	...
 
+class InvertibilityError(PropertyError):
+	...
+
 
 class Function:
 
@@ -67,6 +70,9 @@ class ClosedOperation(Function):
 	ASSOCIATIVE = False
 	COMMUTATIVE = False
 	LATIN_SQUARE = False
+	LEFT_INVERTIBLE = False
+	RIGHT_INVERTIBLE = False
+	INVERTIBLE = False
 
 	def __init__(self, _func, domain):
 		if not isinstance(domain, CoralSet):
@@ -113,6 +119,24 @@ class ClosedOperation(Function):
 				return False
 		return True
 
+	def is_left_invertible(self, samples):
+		if not all(self.domain.has_element(sample) for sample in samples):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		for a, b in itertools.permutations(samples, 2):
+			c = self._func(a, b)
+			if not b == self._inverse(c, a):
+				return False
+		return True
+
+	def is_right_invertible(self, samples):
+		if not all(self.domain.has_element(sample) for sample in samples):
+			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
+		for a, b in itertools.permutations(samples, 2):
+			c = self._func(a, b)
+			if not a == self._inverse(c, b):
+				return False
+		return True
+
 
 class AssociativeMeta(type):
 
@@ -155,16 +179,9 @@ class AbelianOperation(CommutativeOperation):
 	...
 
 
-class InvertibleOperation(ClosedOperation):
-	# TODO: invertible operations
-	...
-
-
-# operation that's both associative and commutative
-class AbelianGroupOperation(ClosedOperation):
+class AssociativeAbelianOperation(AbelianOperation):
 
 	ASSOCIATIVE = True
-	COMMUTATIVE = True
 	LATIN_SQUARE = True
 
 	def __call__(self, a, b):
@@ -172,10 +189,92 @@ class AbelianGroupOperation(ClosedOperation):
 		if self.num_samples >= 3:
 			if not self.is_associative(self.cached_samples):
 				raise AssociativityError('Operation is not associative over the given domain')
-		if self.num_samples >= 2:
-			if not self.is_commutative(self.cached_samples):
-				raise CommutativityError('Operation is not commutative over the given domain')
 		return result
+
+
+class LeftInvertibleMeta(type):
+
+	def __instancecheck__(cls, instance):
+		return instance.LEFT_INVERTIBLE
+
+
+class LeftInvertibleOperation(ClosedOperation, metaclass=LeftInvertibleMeta):
+
+	LEFT_INVERTIBLE = True
+
+	def __init__(self, _func, _func_inverse, domain):
+		super().__init__(_func, domain)
+		self._inverse = ClosedOperation(_func_inverse, domain)
+
+	def __call__(self, a, b):
+		result = super().__call__(a, b)
+		if self.num_samples >= 2:
+			if not self.is_left_invertible(self.cached_samples):
+				raise InvertibilityError('Operation is not left-invertible over the given domain')
+		return result
+
+
+class RightInvertibleMeta(type):
+
+	def __instancecheck__(cls, instance):
+		return instance.RIGHT_INVERTIBLE
+
+
+class RightInvertibleOperation(ClosedOperation, metaclass=RightInvertibleMeta):
+
+	RIGHT_INVERTIBLE = True
+
+	def __init__(self, _func, _func_inverse, domain):
+		super().__init__(_func, domain)
+		self._inverse = ClosedOperation(_func_inverse, domain)
+
+	def __call__(self, a, b):
+		result = super().__call__(a, b)
+		if self.num_samples >= 2:
+			if not self.is_right_invertible(self.cached_samples):
+				raise InvertibilityError('Operation is not right-invertible over the given domain')
+		return result
+
+
+class InvertibleMeta(type):
+
+	def __instancecheck__(cls, instance):
+		return instance.INVERTIBLE
+
+
+class InvertibleOperation(ClosedOperation, metaclass=InvertibleMeta):
+
+	LEFT_INVERTIBLE = True
+	RIGHT_INVERTIBLE = True
+	INVERTIBLE = True
+	LATIN_SQUARE = True
+
+	def __init__(self, _func, _func_inverse, domain):
+		super().__init__(_func, domain)
+		self._inverse = ClosedOperation(_func_inverse, domain)
+
+	def __call__(self, a, b):
+		result = super().__call__(a, b)
+		if self.num_samples >= 2:
+			if not self.is_left_invertible(self.cached_samples):
+				raise InvertibilityError('Operation is not left-invertible over the given domain')
+			if not self.is_right_invertible(self.cached_samples):
+				raise InvertibilityError('Operation is not right-invertible over the given domain')
+		return result
+
+
+class ModularOperation(InvertibleOperation):
+	ASSOCIATIVE = True
+
+
+def addition_mod(n):
+	if not (isinstance(n, int) and n > 0):
+		raise TypeError('Can only take a modulo by a positive integer')
+	return ModularOperation(
+		lambda a, b: (a + b) % n,
+		lambda a, b: (a - b) if a >= b else (a - b) + n,
+		CoralSet([*range(n)])
+	)
 
 
 class LatinSquareMeta(type):

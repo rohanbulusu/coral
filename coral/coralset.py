@@ -35,6 +35,9 @@ class CoralSet:
             return False
         return any(candidate in subset for subset in self._underlying)
 
+    def __contains__(self, item):
+        return self.has_element(item)
+
     def __or__(self, other):
         if not isinstance(other, self.__class__):
             raise TypeError(f'Expected {typename(self)}, not {typename(other)}')

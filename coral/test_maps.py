@@ -69,19 +69,19 @@ class TestAbelianOperation:
 			_ = real_subtraction(1, 2)
 
 
-class TestAbelianGroupOperation:
+class TestAssociativeAbelianOperation:
 
 	def test_addition_is_abelian_group_operation(self):
-		real_addition = AbelianGroupOperation(lambda a, b: a + b, REALS)
+		real_addition = AssociativeAbelianOperation(lambda a, b: a + b, REALS)
 		_ = real_addition(1, 2)
 
 	def test_subtraction_fails_commutativity(self):
-		real_subtraction = AbelianGroupOperation(lambda a, b: a - b, REALS)
+		real_subtraction = AssociativeAbelianOperation(lambda a, b: a - b, REALS)
 		with raises(CommutativityError):
 			_ = real_subtraction(1, 2)
 
 	def test_operation_fails_associativity(self):
-		operation = AbelianGroupOperation(lambda a, b: 2*a + 2*b, REALS)
+		operation = AssociativeAbelianOperation(lambda a, b: 2*a + 2*b, REALS)
 		_ = operation(1, 2)
 		with raises(AssociativityError):
 			_ = operation(3, 4)
