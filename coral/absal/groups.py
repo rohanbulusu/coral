@@ -2,38 +2,7 @@
 from .commute import Monoid
 from coral.utils import typename
 from coral.coralset import CoralSet
-from coral.maps import InvertibleOperation, addition_mod
-
-
-class GroupOperation(InvertibleOperation):
-
-	ASSOCIATIVE = True
-
-	def __call__(self, a, b):
-		result = super().__call__(a, b)
-		if self.num_samples >= 3:
-			if not self.is_associative(self.cached_samples):
-				raise AssociativityError('Operation is not associative over the given domain')
-		return result
-
-	@classmethod
-	def from_invertible(cls, invertible_operation):
-		if not isinstance(invertible_operation, InvertibleOperation):
-			raise TypeError('Must provide an invertible operation to define a group operation in this way')
-		return GroupOperation(invertible_operation._func, invertible_operation._inverse, invertible_operation.domain)
-
-
-class AbelianGroupOperation(GroupOperation):
-
-	COMMUTATIVE = True
-
-	def __call__(self, a, b):
-		result = super().__call__(a, b)
-		if self.num_samples >= 2:
-			if not self.is_commutative(self.cached_samples):
-				raise CommutativityError('Operation is not commutative over the given domain')
-		return result
-
+from coral.maps import InvertibleOperation, GroupOperation, addition_mod
 
 class Group(Monoid):
 

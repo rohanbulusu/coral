@@ -1,3 +1,3 @@
-from commute import *
-from groups import *
-from rings import *
+from .commute import *
+from .groups import *
+from .rings import *
