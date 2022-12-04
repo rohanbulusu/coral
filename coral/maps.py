@@ -60,7 +60,7 @@ class Function:
 
 	def __call__(self, *args):
 		for arg, domain in zip(args, self.input_domains):
-			if not domain.has_element(arg):
+			if arg not in domain:
 				raise DomainError(f'Expected element of {domain}, not {arg}')
 		return self._func(*args)
 
@@ -95,7 +95,7 @@ class ClosedOperation(Function):
 		self._cache_sample(a)
 		self._cache_sample(b)
 		result = super().__call__(a, b)
-		if not self.domain.has_element(result):
+		if result not in self.domain:
 			raise ClosureError(f'Operation output {result} is not in the target {self.domain}')
 		if result == a:
 			self.indempotents.add(a)
@@ -104,7 +104,7 @@ class ClosedOperation(Function):
 		return result
 
 	def is_associative(self, samples):
-		if not all(self.domain.has_element(sample) for sample in samples):
+		if not all(sample in self.domain for sample in samples):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
 		for a, b, c in itertools.permutations(samples, 3):
 			if not self._func(self._func(a, b), c) == self._func(a, self._func(b, c)):
@@ -112,7 +112,7 @@ class ClosedOperation(Function):
 		return True
 
 	def is_commutative(self, samples):
-		if not all(self.domain.has_element(sample) for sample in samples):
+		if not all(sample in self.domain for sample in samples):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
 		for a, b in itertools.permutations(samples, 2):
 			if not self._func(a, b) == self._func(b, a):
@@ -120,7 +120,7 @@ class ClosedOperation(Function):
 		return True
 
 	def is_left_invertible(self, samples):
-		if not all(self.domain.has_element(sample) for sample in samples):
+		if not all(sample in self.domain for sample in samples):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
 		for a, b in itertools.permutations(samples, 2):
 			c = self._func(a, b)
@@ -129,7 +129,7 @@ class ClosedOperation(Function):
 		return True
 
 	def is_right_invertible(self, samples):
-		if not all(self.domain.has_element(sample) for sample in samples):
+		if not all(sample in self.domain for sample in samples):
 			raise DomainError(f'Not all sample elements are in the binary operation\'s domain')
 		for a, b in itertools.permutations(samples, 2):
 			c = self._func(a, b)
