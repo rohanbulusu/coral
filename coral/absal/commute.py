@@ -4,7 +4,7 @@ from coral.coralset import CoralSet
 from coral.maps import PropertyError, ClosedOperation, AssociativeOperation, LatinSquareOperation
 
 def validate_identity_element(cset, candidate):
-    if not cset.has_element(candidate):
+    if candidate not in cset:
         raise ValueError(f'Expected identity element {candidate} to be contained in {cset}')
     return candidate
 
