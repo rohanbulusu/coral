@@ -24,8 +24,8 @@ class CoralSet:
             return False
         # both sets are finite
         return set(*self._underlying) == set(*other._underlying)
-
-    def has_element(self, candidate):
+        
+    def __contains__(self, item):
         if self.is_infinite:
             for sub_set_like in self._underlying:
                 if isinstance(sub_set_like, type) and isinstance(candidate, sub_set_like):
@@ -34,9 +34,6 @@ class CoralSet:
                     return True
             return False
         return any(candidate in subset for subset in self._underlying)
-
-    def __contains__(self, item):
-        return self.has_element(item)
 
     def __or__(self, other):
         if not isinstance(other, self.__class__):
