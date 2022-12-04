@@ -1,5 +1,19 @@
 
+from pytest import fixture
+
 from .coralset import *
+
+@fixture
+def Z():
+    return CoralSet(int)
+
+@fixture
+def R(Z):
+    return CoralSet(float) | Z
+
+@fixture
+def C(R):
+    return R | CoralSet(float)
 
 
 class TestCoralSet:
@@ -17,34 +31,30 @@ class TestCoralSet:
         assert CoralSet(range(3))
         assert CoralSet(set(range(3)))
 
-    def test_has_element_integers(self):
-        integers = CoralSet(int)
-        assert 1 in integers
-        assert 0 in integers
-        assert -1 in integers
+    def test_has_element_integers(self, Z):
+        assert 1 in Z
+        assert 0 in Z
+        assert -1 in Z
 
-    def test_non_elements_integers(self):
-        integers = CoralSet(int)
-        assert 0.1 not in integers
-        assert 0.0 not in integers # should this be true or false?
-        assert -0.1 not in integers
-        assert [1, 2, 3] not in integers
+    def test_non_elements_integers(self, Z):
+        assert 0.1 not in Z
+        assert 0.0 not in Z # should this be true or false?
+        assert -0.1 not in Z
+        assert [1, 2, 3] not in Z
 
-    def test_has_element_reals(self):
-        reals = CoralSet(float) | CoralSet(int)
-        assert -1.2 in reals
-        assert -1 in reals
-        assert -1.0 in reals
-        assert 0 in reals
-        assert 0.0 in reals
-        assert 1 in reals
-        assert 1.0 in reals
-        assert 1.2 in reals
+    def test_has_element_reals(self, R):
+        assert -1.2 in R
+        assert -1 in R
+        assert -1.0 in R
+        assert 0 in R
+        assert 0.0 in R
+        assert 1 in R
+        assert 1.0 in R
+        assert 1.2 in R
 
-    def test_non_elements_reals(self):
-        reals = CoralSet(float)
-        assert 1 + 2j not in reals
-        assert [1, 2, 3] not in reals
+    def test_non_elements_reals(self, R):
+        assert 1 + 2j not in R
+        assert [1, 2, 3] not in R
 
     def test_has_element_discrete_set(self):
         discrete = CoralSet((1, 2, 3))
