@@ -13,7 +13,7 @@ def R(Z):
 
 @fixture
 def C(R):
-    return R | CoralSet(float)
+    return R | CoralSet(complex)
 
 
 class TestCoralSet:
@@ -113,7 +113,6 @@ class TestCoralSet:
 
         R_adjoin_i = R | CoralSet((1j, -1j))
         assert R.is_subset(R_adjoin_i)
-        assert R_adjoin_i.is_subset(R)
         assert R_adjoin_i.is_subset(C)
 
     def test_is_subset_for_discrete_subsets_of_a_discrete_set(self):
@@ -148,7 +147,6 @@ class TestCoralSet:
 
         R_adjoin_i = R | CoralSet((1j, -1j))
         assert R_adjoin_i.has_subset(R)
-        assert R.has_subset(R_adjoin_i)
         assert C.has_subset(R_adjoin_i)
 
     def test_has_subset_for_discrete_subsets_of_a_discrete_set(self):

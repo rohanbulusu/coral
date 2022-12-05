@@ -46,6 +46,41 @@ class CoralSet:
             return self.__class__(*self._underlying, *other._underlying)
         return self.__class__(*self._underlying, *other._underlying)
 
+    def has_subset(self, candidate):
+        if not isinstance(candidate, CoralSet):
+            raise TypeError(f'Expected {typename(self)}, not {typename(candidate)}')
+        # ensures this method only implements a PROPER subset
+        if self == candidate:
+            return False
+        # if both sets are infinite
+        if self.is_infinite and candidate.is_infinite:
+            for c_set_like in candidate._underlying:
+                if c_set_like not in self._underlying:
+                    if isinstance(c_set_like, type):
+                        return False
+                    for element in c_set_like:
+                        if any(isinstance(element, s_set_like) for s_set_like in self._underlying if isinstance(s_set_like, type)):
+                            continue
+                        if not any(element in s_set_like for s_set_like in self._underlying if not isinstance(s_set_like, type)):
+                            return False
+            return True
+        # if self is infinite and candidate is finite
+        if self.is_infinite:
+            return all(
+                all(any(isinstance(item, T) for T in self._underlying) for item in sub_set_like)
+                for sub_set_like in candidate._underlying
+            )
+        # if candidate is infinite and self is finite
+        if candidate.is_infinite:
+            return False
+        # if both sets are finite
+        return (self | candidate) == self
+
+    def is_subset(self, candidate):
+        if not isinstance(candidate, CoralSet):
+            raise TypeError(f'Expected {typename(self)}, not {typename(candidate)}')
+        return candidate.has_subset(self)
+
 
 class PositiveRealsMeta(type):
 
