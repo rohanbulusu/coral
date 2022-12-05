@@ -122,7 +122,7 @@ class TestCoralSet:
         assert sub_A.is_subset(A)
 
         B = A | CoralSet((4, 5, 6))
-        sub_B = CoralSet(5, 6)
+        sub_B = CoralSet((5, 6))
         assert sub_B.is_subset(B)
         assert A.is_subset(B)
         assert sub_A.is_subset(B)
@@ -157,7 +157,7 @@ class TestCoralSet:
         assert A.has_subset(sub_A)
 
         B = A | CoralSet((4, 5, 6))
-        sub_B = CoralSet(5, 6)
+        sub_B = CoralSet((5, 6))
         assert B.has_subset(sub_B)
         assert B.has_subset(A)
         assert B.has_subset(sub_A)
