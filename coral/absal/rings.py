@@ -1,4 +1,5 @@
 
+from .groups import Group
 from coral.utils import typename
 from coral.coralset import CoralSet
 from coral.maps import PropertyError, AbelianGroupOperation, AssociativeOperation
@@ -21,13 +22,6 @@ class Ring:
     
     def mul(self, a, b):
         return self.multiplication(a, b)
-
-
-class Ideal:
-
-    def __init__(self, ring, ideal_elements):
-        self.ring = ring
-        self.cset = ideal_elements
 
     
 
