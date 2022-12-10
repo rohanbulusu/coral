@@ -38,23 +38,6 @@ class TestRing:
 		assert R_ring.multiplication(1, 4) == R_ring.mul(1, 4)
 		assert R_ring.multiplication(5, -3/2) == R_ring.mul(5, -3/2)
 
-	def test_is_ideal_on_discrete_subsets(self):
-		finite = Ring(
-			CoralSet((-2, -1, 0, 1, 2)), 
-			AbelianGroupOperation(lambda a, b: a + b, lambda a, b: a - b, REALS),
-			AbelianGroupOperation(lambda a, b: a*b, lambda a, b: a / b, REALS)
-		)
-		assert not finite.has_ideal(CoralSet((1, 0)))
-		assert finite.has_ideal(CoralSet((-2, 0, 2)))
-		assert finite.has_ideal(CoralSet((0,)))
-		assert finite.has_ideal(CoralSet((-2, -1, 0, 1, 2)))
-
-	def test_is_ideal_on_infinite_subsets(self, R_ring):
-		assert not R_ring.has_ideal(CoralSet((-1, 0)))
-		assert R_ring.has_ideal(CoralSet((-2.4, 0, 2.4)))
-		assert R_ring.has_ideal(CoralSet((0,)))
-		assert R_ring.has_ideal(REALS)
-
 
 
 

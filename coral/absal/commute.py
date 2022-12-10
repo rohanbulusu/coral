@@ -3,10 +3,12 @@ from coral.utils import typename
 from coral.coralset import CoralSet
 from coral.maps import PropertyError, ClosedOperation, AssociativeOperation, LatinSquareOperation
 
-def validate_identity_element(cset, candidate):
-    if candidate not in cset:
-        raise ValueError(f'Expected identity element {candidate} to be contained in {cset}')
-    return candidate
+def identity_element_is_valid(operation, candidate):
+    if not isinstance(operation, ClosedOperation):
+        raise TypeError(f'Expected ClosedOperation, not {typename(operation)}')
+    if not candidate in list(operation.indempotents):
+        return operation(candidate, candidate) == candidate
+    return True
 
 
 class Magma:
@@ -33,7 +35,9 @@ class UnitalMagma(Magma):
 
     def __init__(self, cset, identity, binop: ClosedOperation):
         super().__init__(cset, binop)
-        self.identity = validate_identity_element(cset, identity)
+        if not identity_element_is_valid(binop, identity):
+            raise ValueError(f'Expected true identity for {cset}, not {identity}')
+        self.identity = identity
 
     def __eq__(self, other):
         if not isinstance(other, UnitalMagma):

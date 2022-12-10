@@ -1,4 +1,5 @@
 
+from .commute import identity_element_is_valid
 from .groups import Group
 from coral.utils import typename
 from coral.coralset import CoralSet
