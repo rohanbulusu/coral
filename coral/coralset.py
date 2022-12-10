@@ -13,6 +13,12 @@ class CoralSet:
     def __repr__(self):
         return f'CoralSet{tuple(self._underlying)}'
 
+    @property
+    def elements(self):
+        if self.is_infinite:
+            raise ValueError(f'Cannot list all elements of an infinite set')
+        return chain(*self._underlying)
+
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False

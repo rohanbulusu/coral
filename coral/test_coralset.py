@@ -1,5 +1,5 @@
 
-from pytest import fixture
+from pytest import fixture, raises
 
 from .coralset import *
 
@@ -168,3 +168,11 @@ class TestCoralSet:
     def test_has_subset_is_proper_subset(self, R, C):
         assert not R.has_subset(R)
         assert not CoralSet((1, 2, 3)).has_subset(CoralSet((1, 2, 3)))
+
+    def test_lists_finite_elements(self):
+        assert CoralSet((1, 2, 3)).elements == (1, 2, 3)
+        assert (CoralSet((1, 2, 3)) | CoralSet((4, 5, 6))).elements == (1, 2, 3, 4, 5, 6)
+
+    def test_refuses_to_list_infinite_elements(self):
+        with raises(ValueError):
+            assert CoralSet(float).elements == (1, 2, 3, 4).elements
