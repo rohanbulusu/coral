@@ -7,13 +7,15 @@ from coral.maps import PropertyError, AbelianGroupOperation, AssociativeOperatio
 
 class Ring:
     
-    def __init__(self, cset, group_addition, multiplication):
+    def __init__(self, cset, identity, group_addition, multiplication):
         if not isinstance(cset, CoralSet):
             raise TypeError(f'Expected CoralSet, not {typename(cset)}')
         if not isinstance(group_addition, AbelianGroupOperation):
             raise PropertyError(f'Expected an abelian group addition, not {typename(group_addition)}')
         if not isinstance(multiplication, AssociativeOperation):
             raise PropertyError(f'Expected an associative multiplication, not {typename(multiplication)}')
+        if not identity_element_is_valid(group_addition, identity):
+            raise TypeError(f'Expected valid identity for {cset} over {group_addition}, not {identity}')
         self.cset = cset
         self.addition = group_addition
         self.multiplication = multiplication
