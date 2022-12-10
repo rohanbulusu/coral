@@ -12,9 +12,8 @@ class TestGroup:
 		assert Group(CoralSet((0, 1, 2, 3)), 0, addition_mod(4))
 
 	def test_checks_for_valid_identity(self):
-		bad_Z3 = Group(CoralSet((0, 1, 2)), 1, addition_mod(3))
-		assert bad_Z3(1, 2) != 2
-		assert bad_Z3(0, 2) == 2
+		with raises(ValueError):
+			bad_Z3 = Group(CoralSet((0, 1, 2)), 1, addition_mod(3))
 
 
 class TestZn:
