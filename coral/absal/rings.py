@@ -19,6 +19,15 @@ class Ring:
         self.cset = cset
         self.addition = group_addition
         self.multiplication = multiplication
+
+    @classmethod
+    def from_group(cls, addition_group, multiplication):
+        return cls(
+            addition_group.cset, 
+            addition_group.identity, 
+            addition_group.binop, 
+            multiplication
+        )
     
     def add(self, a, b):
         return self.addition(a, b)
