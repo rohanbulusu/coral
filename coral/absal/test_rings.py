@@ -15,7 +15,7 @@ def R_multiplication():
 
 @fixture
 def R_ring(R_addition, R_multiplication):
-	return Ring(REALS, R_addition, R_multiplication)
+	return Ring(REALS, R_addition, 0, R_multiplication)
 
 
 class TestRing:
@@ -23,12 +23,12 @@ class TestRing:
 	def test_only_accepts_abelian_group_addition(self, R_multiplication):
 		with raises(PropertyError):
 			bad_R_addition = ClosedOperation(lambda a, b: a + b, REALS)
-			assert Ring(REALS, bad_R_addition, R_multiplication)
+			assert Ring(REALS, bad_R_addition, 0, R_multiplication)
 
 	def test_only_accepts_associative_multiplication(self, R_addition):
 		with raises(PropertyError):
 			bad_R_multiplication = ClosedOperation(lambda a, b: a*b, REALS)
-			assert Ring(REALS, R_addition, bad_R_multiplication)
+			assert Ring(REALS, R_addition, 1, bad_R_multiplication)
 
 	def test_ring_addition(self, R_ring):
 		assert R_ring.addition(1, 3) == R_ring.add(1, 3)
