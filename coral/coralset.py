@@ -60,8 +60,6 @@ class CoralSet:
             return False
 
         if isinstance(self._underlying[0], CustomCoralSet) and isinstance(candidate._underlying[0], CustomCoralSet):
-            print(f'Self: {self._underlying[0]}, closure: {self._underlying[0].CLOSURE}')
-            print(f'Candidate: {self._underlying[0]}, closure: {self._underlying[0].CLOSURE}')
             return self._underlying[0].CLOSURE.has_subset(candidate._underlying[0].CLOSURE)
         if isinstance(self._underlying[0], CustomCoralSet):
             return self._underlying[0].CLOSURE.has_subset(candidate)
