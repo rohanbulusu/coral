@@ -103,8 +103,20 @@ class Reals(metaclass=RealNumbersMeta):
     ...
 
 
+class EvenIntegersMeta(type):
+
+    def __instancecheck__(cls, instance):
+        return isinstance(instance, int) and (instance % 2 == 0)
+
+
+class EvenIntegers(metaclass=EvenIntegersMeta):
+    ...
+
+
 REALS = CoralSet(Reals)
 POSITIVE_REALS = CoralSet(PositiveReals)
+INTEGERS = CoralSet(int)
+EVEN_INTEGERS = CoralSet(EvenIntegers)
 COMPLEX = REALS | CoralSet(complex)
 NUMBERS = COMPLEX
 
