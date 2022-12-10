@@ -58,6 +58,16 @@ class CoralSet:
         # ensures this method only implements a PROPER subset
         if self == candidate:
             return False
+
+        if isinstance(self._underlying[0], CustomCoralSet) and isinstance(candidate._underlying[0], CustomCoralSet):
+            print(f'Self: {self._underlying[0]}, closure: {self._underlying[0].CLOSURE}')
+            print(f'Candidate: {self._underlying[0]}, closure: {self._underlying[0].CLOSURE}')
+            return self._underlying[0].CLOSURE.has_subset(candidate._underlying[0].CLOSURE)
+        if isinstance(self._underlying[0], CustomCoralSet):
+            return self._underlying[0].CLOSURE.has_subset(candidate)
+        if isinstance(candidate._underlying[0], CustomCoralSet):
+            return candidate._underlying[0].CLOSURE.has_subset(self)  
+
         # if both sets are infinite
         if self.is_infinite and candidate.is_infinite:
             for c_set_like in candidate._underlying:
@@ -88,41 +98,71 @@ class CoralSet:
         return candidate.has_subset(self)
 
 
-class PositiveRealsMeta(type):
+COMPLEX = CoralSet(int) | CoralSet(float) | CoralSet(complex)
+
+
+class CustomCoralSet(type):
+    CLOSURE = tuple()
+
+
+class _RealLocusMeta(CustomCoralSet):
+
+    CLOSURE = COMPLEX
+
+    def __instancecheck__(cls, instance):
+        if isinstance(instance, (int, float)):
+            return True
+        return isinstance(instance, complex) and instance.imag == 0
+
+
+class _RealLocus(metaclass=_RealLocusMeta):
+    ...
+
+
+REALS = CoralSet(_RealLocus)
+
+
+class _PositiveRealsMeta(CustomCoralSet):
+
+    CLOSURE = CoralSet(int) | CoralSet(float)
 
     def __instancecheck__(cls, instance):
         return isinstance(instance, (int, float)) and instance > 0
 
 
-class PositiveReals(metaclass=PositiveRealsMeta):
+class _PositiveReals(metaclass=_PositiveRealsMeta):
     ...
 
 
-class RealNumbersMeta(type):
+POSITIVE_REALS = CoralSet(_PositiveReals)
+
+
+class _IntegersMeta(CustomCoralSet):
+
+    CLOSURE = REALS
 
     def __instancecheck__(cls, instance):
-        is_on_real_locus = isinstance(instance, complex) and instance.imag == 0
-        return isinstance(instance, (int, float)) or is_on_real_locus
+        return isinstance(instance, int)
 
 
-class Reals(metaclass=RealNumbersMeta):
+class _Integers(metaclass=_IntegersMeta):
     ...
 
 
-class EvenIntegersMeta(type):
+INTEGERS = CoralSet(_Integers)
+
+
+class _EvenIntegersMeta(CustomCoralSet):
+
+    CLOSURE = CoralSet(int)
 
     def __instancecheck__(cls, instance):
         return isinstance(instance, int) and (instance % 2 == 0)
 
 
-class EvenIntegers(metaclass=EvenIntegersMeta):
+class _EvenIntegers(metaclass=_EvenIntegersMeta):
     ...
 
 
-REALS = CoralSet(Reals)
-POSITIVE_REALS = CoralSet(PositiveReals)
-INTEGERS = CoralSet(int)
-EVEN_INTEGERS = CoralSet(EvenIntegers)
-COMPLEX = REALS | CoralSet(complex)
-NUMBERS = COMPLEX
+EVEN_INTEGERS = CoralSet(_EvenIntegers)
 

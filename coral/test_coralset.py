@@ -176,3 +176,11 @@ class TestCoralSet:
     def test_refuses_to_list_infinite_elements(self):
         with raises(ValueError):
             assert CoralSet(float).elements == (1, 2, 3, 4).elements
+
+    def test_is_subset_for_custom_coralsets(self):
+        assert POSITIVE_REALS.is_subset(REALS)
+        assert EVEN_INTEGERS.is_subset(INTEGERS)
+
+    def test_has_subset_for_custom_coralsets(self):
+        assert REALS.has_subset(POSITIVE_REALS)
+        assert INTEGERS.has_subset(EVEN_INTEGERS)
