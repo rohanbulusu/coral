@@ -1,9 +1,26 @@
 
-from pytest import raises
+from pytest import fixture, raises
 
-from coral.maps import PropertyError, addition_mod
+from coral.maps import PropertyError, AbelianGroupOperation, addition_mod, REALS
 from coral.coralset import CoralSet
 from .groups import *
+
+
+@fixture
+def R_addition():
+	return AbelianGroupOperation(lambda a, b: a + b, lambda a, b: a - b, REALS)
+
+@fixture
+def R_multiplication():
+	return AbelianGroupOperation(lambda a, b: a*b, lambda a, b: a/b, REALS)
+
+@fixture
+def R_additive_group(R_addition):
+	return Group(REALS, 0, R_addition)
+
+@fixture
+def R_multiplicative_group(R_multiplication):
+	return Group(REALS, 1, R_multiplication)
 
 
 class TestGroup:
@@ -14,6 +31,16 @@ class TestGroup:
 	def test_checks_for_valid_identity(self):
 		with raises(ValueError):
 			bad_Z3 = Group(CoralSet((0, 1, 2)), 1, addition_mod(3))
+
+	def test_is_subgroup(self, R_additive_group, R_multiplicative_group):
+		assert not R_additive_group.is_subgroup(R_multiplicative_group)
+		assert Z_mod(50).is_subgroup(R_additive_group)
+		assert Z_mod(3).is_subgroup(Z_mod(30))
+
+	def test_has_subgroup(self, R_additive_group):
+		assert not Z_mod(3).has_subgroup(Z_mod(30))
+		assert R_additive_group.has_subgroup(Z_mod(40))
+
 
 
 class TestZn:

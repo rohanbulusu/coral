@@ -11,6 +11,16 @@ class Group(Monoid):
 			raise TypeError(f'Expected a group operation, not a {typename(binop)}')
 		super().__init__(cset, identity, binop)
 
+	def is_subgroup(self, parent):
+		if not isinstance(parent, Group):
+			raise TypeError(f'Expected Group, not {typename(parent)}')
+		return self.cset.is_subset(parent.cset) and (self.identity == parent.identity)
+
+	def has_subgroup(self, child):
+		if not isinstance(child, Group):
+			raise TypeError(f'Expected Group, not {typename(child)}')
+		return child.is_subgroup(self)
+
 
 def Z_mod(n):
 	if not isinstance(n, int):
