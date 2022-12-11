@@ -137,7 +137,7 @@ POSITIVE_REALS = CoralSet(_PositiveReals)
 
 class _IntegersMeta(CustomCoralSet):
 
-    CLOSURE = REALS
+    CLOSURE = CoralSet(int) | CoralSet(float)
 
     def __instancecheck__(cls, instance):
         return isinstance(instance, int)
