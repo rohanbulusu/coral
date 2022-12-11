@@ -1,8 +1,8 @@
 
-from pytest import fixture, raises
+from pytest import fixture, raises, skip
 
 from .rings import *
-from coral.coralset import CoralSet, REALS
+from coral.coralset import CoralSet, INTEGERS, EVEN_INTEGERS, REALS
 from coral.maps import PropertyError, ClosedOperation, AbelianGroupOperation
 
 @fixture
@@ -16,6 +16,10 @@ def R_multiplication():
 @fixture
 def R_ring(R_addition, R_multiplication):
 	return Ring(REALS, R_addition, 0, R_multiplication)
+
+@fixture
+def Z_ring(R_addition, R_multiplication):
+	return Ring(INTEGERS, R_addition, 0, R_multiplication)
 
 
 class TestRing:
@@ -38,6 +42,25 @@ class TestRing:
 		assert R_ring.multiplication(1, 4) == R_ring.mul(1, 4)
 		assert R_ring.multiplication(5, -3/2) == R_ring.mul(5, -3/2)
 
+
+class TestIdeal:
+
+	def test_requires_specification_of_cset(self):
+		assert Ideal(EVEN_INTEGERS)
+		with raises(TypeError):
+			assert Ideal({1, 2, 3, 4, 5})
+
+	def test_is_ideal_of_parent_ring(self, Z_ring, R_addition, R_multiplication):
+		true_ideal = Ideal(EVEN_INTEGERS)
+		assert true_ideal.is_ideal_of(Z_ring)
+		whole_ring_ideal = Ideal(Z_ring.cset)
+		assert whole_ring_ideal.is_ideal_of(Z_ring)
+
+		partial_ideal = Ideal(CoralSet((1, 2, 3)))
+		assert not partial_ideal.is_ideal_of(Z_ring)
+		full_ideal = Ideal(CoralSet((-1, 0, 1)))
+		ring = Ring(CoralSet((-1, 0, 1)), R_addition, 0, R_multiplication)
+		assert full_ideal.is_ideal_of(ring)
 
 
 
