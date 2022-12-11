@@ -5,7 +5,7 @@ from .commute import identity_element_is_valid
 from .groups import Group
 from coral.utils import typename
 from coral.coralset import CoralSet, CustomCoralSet
-from coral.maps import PropertyError, AbelianGroupOperation, AssociativeOperation
+from coral.maps import PropertyError, AbelianGroupOperation, AssociativeOperation, InvertibleOperation
 
 class Ring:
     
@@ -49,6 +49,14 @@ class UnitalRing(Ring):
     def __init__(self, cset, group_addition, additive_identity, multiplication, multiplicative_identity):
         super().__init__(cset, group_addition, additive_identity, multiplication, multiplicative_identity)
         self.multiplicative_identity = multiplicative_identity
+
+
+class DivisionRing(UnitalRing):
+
+    def __init__(self, cset, group_addition, additive_identity, multiplication, multiplicative_identity):
+        if not isinstance(multiplication, InvertibleOperation):
+            raise TypeError(f'Expected an invertible operation, not {typename(multiplication)}')
+        super().__init__(cset, group_addition, additive_identity, multiplication, multiplicative_identity)
 
 
 class Ideal:
