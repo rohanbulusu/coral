@@ -78,6 +78,11 @@ class Ideal:
             return False
         return True
 
+    def is_proper_right_ideal_of(self, ring):
+        if self.cset == ring.cset:
+            return False
+        return self.is_right_ideal_of(ring)
+
     def is_left_ideal_of(self, ring):
         if not isinstance(ring, Ring):
             raise TypeError(f'Expected Ring, not {typename(ring)}')
@@ -105,10 +110,16 @@ class Ideal:
             return False
         return True
 
+    def is_proper_left_ideal_of(self, ring):
+        if self.cset == ring.cset:
+            return False
+        return self.is_left_ideal_of(ring)
 
     def is_ideal_of(self, ring):
         return self.is_right_ideal_of(ring) and self.is_left_ideal_of(ring)
-        
+
+    def is_proper_ideal_of(self, ring):
+        return self.is_proper_right_ideal_of(ring) and self.is_proper_left_ideal_of(ring)
         
 
 

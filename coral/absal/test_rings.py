@@ -62,5 +62,10 @@ class TestIdeal:
 		ring = Ring(CoralSet((-1, 0, 1)), R_addition, 0, R_multiplication)
 		assert full_ideal.is_ideal_of(ring)
 
+	def test_is_proper_ideal_of_parent_ring(self, Z_ring):
+		true_ideal = Ideal(EVEN_INTEGERS)
+		assert true_ideal.is_proper_ideal_of(Z_ring)
+		whole_ring_ideal = Ideal(Z_ring.cset)
+		assert not whole_ring_ideal.is_proper_ideal_of(Z_ring)
 
 
