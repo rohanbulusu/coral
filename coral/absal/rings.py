@@ -44,6 +44,13 @@ class Ring:
         return self.multiplication(a, b)
 
 
+class UnitalRing(Ring):
+
+    def __init__(self, cset, group_addition, additive_identity, multiplication, multiplicative_identity):
+        super().__init__(cset, group_addition, additive_identity, multiplication, multiplicative_identity)
+        self.multiplicative_identity = multiplicative_identity
+
+
 class Ideal:
 
     def __init__(self, cset):
@@ -120,7 +127,7 @@ class Ideal:
 
     def is_proper_ideal_of(self, ring):
         return self.is_proper_right_ideal_of(ring) and self.is_proper_left_ideal_of(ring)
-        
+    
 
 
 
