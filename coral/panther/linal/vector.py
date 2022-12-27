@@ -64,6 +64,27 @@ class Vector:
 			raise TypeError(f'Expected Number, not {typename(other)}')
 		return (1 / other) * self
 
+	def __getitem__(self, index):
+		if not isinstance(index, int):
+			raise TypeError(f'Expected int, not {typename(index)}')
+		if self.dim == 0:
+			return 0
+		return self.components[index]
+
+	@staticmethod
+	def sum(*summands):
+		total = Vector()
+		for summand in summands:
+			total = total + summand
+		return total
+
+	@staticmethod
+	def average(*vectors):
+		if len(vectors) == 0:
+			raise ValueError('Expected Vectors, recieved no arguments')
+		total = Vector.sum(*vectors)
+		return total / len(vectors)
+
 
 class Vector2(Vector):
 
