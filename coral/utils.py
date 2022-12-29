@@ -14,6 +14,20 @@ def chain(*iterators):
 
 	return tuple(_generator_chain(*iterators))
 
+def zeros(n):
+	if not isinstance(n, int):
+		raise TypeError(f'Expected int, got {typename(n)}')
+	if not n >= 0:
+		raise ValueError(f'Expected length to be greater than 0, not {n}')
+	return (0 for _ in range(n))
+
+def ones(n):
+	if not isinstance(n, int):
+		raise TypeError(f'Expected int, got {typename(n)}')
+	if not n >= 0:
+		raise ValueError(f'Expected length to be greater than 0, not {n}')
+	return [1 for _ in range(n)]
+
 
 class _NumberMeta(type):
 

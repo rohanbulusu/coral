@@ -101,6 +101,13 @@ class TestVector:
 		with raises(ValueError):
 			assert Vector.average()
 
+	def test_vector_padding(self):
+		with raises(ValueError):
+			assert Vector(1, 2).pad_to(1)
+		assert Vector(1, 2, 3).pad_to(4) == Vector(1, 2, 3, 0)
+		assert Vector(1, 2, 3).pad_to(3) == Vector(1, 2, 3)
+		assert Vector(1, 2, 3).pad_to(5) == Vector(1, 2, 3, 0, 0)
+
 class TestVector2:
 
 	def test_subclassing(self):

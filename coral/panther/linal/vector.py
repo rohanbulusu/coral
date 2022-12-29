@@ -1,5 +1,5 @@
 
-from coral.utils import typename, Number, HasSum, HasProduct
+from coral.utils import typename, zeros, Number, HasSum, HasProduct
 
 
 class Vector:
@@ -18,6 +18,14 @@ class Vector:
 
 	def copy(self):
 		return self.__class__(*self.components)
+
+	def pad_to(self, length):
+		if not isinstance(length, int):
+			raise TypeError(f'Expected int, not {typename(length)}')
+		if not length >= self.dim:
+			raise ValueError(f'Expected padded length to be greater than current dim of {self.dim}')
+		num_padded_zeros = max(length - self.dim, 0)
+		return self.__class__(*self.components, *zeros(num_padded_zeros))
 
 	def __eq__(self, other):
 		if not isinstance(other, Vector):
