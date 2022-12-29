@@ -129,7 +129,7 @@ class Entity:
 		self.border = border.tk
 		self.point_width = point_width
 		self.point_color = point_color.tk
-
+	# nothing
 	def _set_entity_id(self):
 		self.__id = EntityId(self, id(self))
 		Entity.REGISTERED_ENTITY_IDS.append(self.__id)
