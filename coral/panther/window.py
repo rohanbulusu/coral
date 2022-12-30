@@ -36,13 +36,9 @@ class Point(Vector):
 			raise ValueError(f'Expected {self.dim} arguments but recieved only {len(scale_factors)}')
 		if not all(isinstance(factor, (int, float)) for factor in scale_factors):
 			raise TypeError(f'Expected all scale factors to be either of type int or float')
-		print('Before components:', self.components)
-		print('Scale factors:', scale_factors)
-
 		self.components = tuple([
 			c*factor for c, factor in zip(self.components, scale_factors)
 		])
-		print('After components:', self.components)
 
 
 class Line:
@@ -243,17 +239,11 @@ class Window(tk.Canvas):
 			self.render_entity(entity)
 
 	def _on_window_resize(self, event):
-		x_scale_factor = self.winfo_reqwidth() / self.window_dimensions[0]
-		y_scale_factor = self.winfo_reqwidth() / self.window_dimensions[1]
-		# print('Scale factors:', x_scale_factor, y_scale_factor)
-		# print('New window dimensions:', self.width, self.height)
-		# print('Point location:', self.entities[0].points[0])
+		x_scale_factor = self.width / self.window_dimensions[0]
+		y_scale_factor = self.height / self.window_dimensions[1]
 		self.scale('all', 0, 0, x_scale_factor, y_scale_factor)
-		# for entity in self.entities:
-		# 	entity.scale(x_scale_factor, y_scale_factor, *ones(entity.dimension-2))
-		print('------')
-		print('------------')
-		print('------')
+		for entity in self.entities:
+			entity.scale(x_scale_factor, y_scale_factor, *ones(entity.dimension-2))
 		self.window_dimensions = (self.width, self.height)
 
 	def _on_B1_drag(self, event):
