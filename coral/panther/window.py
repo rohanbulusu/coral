@@ -135,10 +135,11 @@ class Entity:
 			raise ValueError(f'Expected {self.dimension} arguments but recieved only {len(scale_factors)}')
 		if not all(isinstance(factor, (int, float)) for factor in scale_factors):
 			raise TypeError(f'Expected all scale factors to be either of type int or float')
+		# the only thing that needs to be scaled is the points,
+		# since the lines are based on references to the points
+		# already contained in self.points
 		for point in self.points:
 			point.scale(*scale_factors)
-		for line in self.lines:
-			line.scale(*scale_factors)
 
 	@property
 	def id(self):
