@@ -88,6 +88,40 @@ class Line:
 		self.b.scale(*scale_factors)
 
 
+class Triangle:
+
+	def __init__(self, a, b, c, fill=GRAY, border=BLACK):
+		if not isinstance(a, Point):
+			raise TypeError(f'Expected Point, not {typename(a)}')
+		if not isinstance(b, Point):
+			raise TypeError(f'Expected Point, not {typename(b)}')
+		if not isinstance(c, Point):
+			raise TypeError(f'Expected Point, not {typename(c)}')
+		if a.dim != b.dim or b.dim != c.dim or c.dim != a.dim:
+			raise ValueError(f'Expected all Points to have the same dimension')
+		if a.dim < 3:
+			raise ValueError(f'Expected all Points to have at least dimension three')
+		if not isinstance(fill, Color):
+			raise TypeError(f'Expected a Color object, not a {typename(fill)}')
+		if not isinstance(border, Color):
+			raise TypeError(f'Expected a Color object, not a {typename(fill)}')
+		self.a = a
+		self.b = b
+		self.c = c
+		self.dim = self.a.dim
+		self.fill = fill
+		self.border = border
+
+	def scale(self, *scale_factors):
+		if len(scale_factors) != self.dim:
+			raise ValueError(f'Expected {self.dim} arguments but recieved only {len(scale_factors)}')
+		if not all(isinstance(factor, (int, float)) for factor in scale_factors):
+			raise TypeError(f'Expected all scale factors to be either of type int or float')
+		self.a.scale(*scale_factors)
+		self.b.scale(*scale_factors)
+		self.c.scale(*scale_factors)
+
+
 class EntityId:
 
 	def __init__(self, entity, entity_id):
