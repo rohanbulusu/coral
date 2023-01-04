@@ -56,7 +56,7 @@ class Matrix:
 		if isinstance(other, Number):
 			return self.__class__(*[[other*item for item in row] for row in self.rows])
 		if isinstance(other, Vector):
-			return self.__class__(*[[v*item for v, item in zip(other.components, row)] for row in rows])
+			return other.__class__(*[sum([v*item for v, item in zip(other.components, row)]) for row in self.rows])
 		if isinstance(other, Matrix):
 			return self.__class__(*[
 				[sum(s*o for s, o in zip(row, col)) for col in other.cols]
