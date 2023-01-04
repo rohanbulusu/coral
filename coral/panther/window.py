@@ -171,21 +171,21 @@ class Entity:
 		self._set_entity_id()
 		self.points = points
 		self.lines = lines
-		self.dimension = self.points[0].dim
+		self.dim = self.points[0].dim
 		self.orientation = Vector(0, 1).pad_to(self.points[0].dim)
 		self.center = Vector.average(*points)
 		self.fill = fill.tk
 		self.border = border.tk
 		self.point_width = point_width
 		self.point_color = point_color.tk
-	# nothing
+
 	def _set_entity_id(self):
 		self.__id = EntityId(self, id(self))
 		Entity.REGISTERED_ENTITY_IDS.append(self.__id)
 
 	def scale(self, *scale_factors):
-		if len(scale_factors) != self.dimension:
-			raise ValueError(f'Expected {self.dimension} arguments but recieved only {len(scale_factors)}')
+		if len(scale_factors) != self.dim:
+			raise ValueError(f'Expected {self.dim} arguments but recieved only {len(scale_factors)}')
 		if not all(isinstance(factor, (int, float)) for factor in scale_factors):
 			raise TypeError(f'Expected all scale factors to be either of type int or float')
 		# the only thing that needs to be scaled is the points,
@@ -203,9 +203,33 @@ class Entity:
 		return candidate in Entity.REGISTERED_ENTITY_IDS
 
 
+class Entity3D(Entity):
+
+	def __init__(self, points, triangles, **kwargs):
+		super().__init__(points, **kwargs)
+		if not all(point.dim >= 3 or point.dim == 0 for point in points):
+			raise ValueError(f'Expected all points to have a dimension of at least three')
+		if not isinstance(triangles, Sequence):
+			raise TypeError(f'Expected a Sequence of Triangle objects, not a {typename(triangles)}')
+		if not all(isinstance(tri, Triangle) for tri in triangles):
+			raise TypeError(f'Expected a Sequence of Triangle objects, not of {typename(triangles[0])} objects')
+		self.triangles = triangles
+
+	def rotate3D(self, xy_angle, xz_angle, yz_angle):
+		"""Rotation of all the points around the axes defined by the first
+		three coordinates of the Entity's points
+		"""
+		for point in self.points:
+			point.rotate3D(xy_angle, xz_angle, yz_angle)
+
+	def translate3D(self, delta_x, delta_y, delta_z):
+		for point in self.points:
+			point.translate3D(delta_x, delta_y, delta_z)
+
+
 class Window(tk.Canvas):
 
-	def __init__(self, width, height, fill=WHITE):
+	def __init__(self, width, height, fill=WHITE, distance_from_center=100, zoom_sensitivity=50):
 		if not isinstance(width, int):
 			raise TypeError(f'Expected width to be an int, not a {typename(width)}')
 		if not width > 0:
