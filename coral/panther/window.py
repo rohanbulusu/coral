@@ -240,9 +240,20 @@ class Window(tk.Canvas):
 			raise ValueError(f'Expected height to be greater than 0')
 		if not isinstance(fill, Color):
 			raise TypeError(f'Expected fill to be a Color, not a {typename(fill)}')
+		if not isinstance(distance_from_center, int):
+			raise TypeError(f'Expected distance from center to be an int, not a {typename(distance_from_center)}')
+		if not distance_from_center > 0:
+			raise ValueError(f'Expected distance from center to be greater than zero')
+		if not isinstance(zoom_sensitivity, (int, float)):
+			raise TypeError(f'Expected zoom sensitivity to be an int or a float, not a {typename(zoom_sensitivity)}')
+		if not 0 < zoom_sensitivity <= 100:
+			raise ValueError(f'Expected zoom sensitivity to be a percent from the domain (0, 100]')
 		super().__init__(width=width, height=height, bg=fill.tk)
 		self.entities = []
-		self.window_dimensions = (self.winfo_reqwidth(), self.winfo_reqwidth())
+		self.window_dims = (self.winfo_reqwidth(), self.winfo_reqwidth())
+		self.mouse_coords = (self.winfo_reqwidth()/2, self.winfo_reqwidth()/2)
+		self.distance_from_center = distance_from_center
+		self.zoom_sensitivity = zoom_sensitivity
 		self.pack(fill=tk.BOTH, expand=tk.TRUE)
 
 	@property
@@ -304,9 +315,30 @@ class Window(tk.Canvas):
 			tags=[entity_id.tk]
 		)
 
+	def render_triangle(self, entity_id, triangle, **kwargs):
+		if not Entity.is_valid_entity_id(entity_id):
+			raise ValueError(f'Entity id {entity_id} is not a valid Entity id')
+		if not isinstance(triangle, Triangle):
+			raise TypeError(f'Expected Triangle, not {typename(triangle)}')
+		A = self.center_to_window(triangle.a)
+		B = self.center_to_window(triangle.b)
+		C = self.center_to_window(triangle.c)
+		self.create_polygon(
+			A[0], A[1],
+			B[0], B[1],
+			C[0], C[1],
+			fill=triangle.fill.tk,
+			outline=triangle.border.tk,
+			**kwargs,
+			tags=[entity_id.tk]
+		)
+
 	def render_entity(self, entity):
 		if not isinstance(entity, Entity):
 			raise TypeError(f'Expected object of type Entity, not {typename(entity)}')
+		if isinstance(entity, Entity3D):
+			for tri in entity.triangles:
+				self.render_triangle(entity.id, tri)
 		for line in entity.lines:
 			self.render_line(entity.id, line)
 		for point in entity.points:
@@ -317,26 +349,51 @@ class Window(tk.Canvas):
 			self.render_entity(entity)
 
 	def _on_window_resize(self, event):
-		x_scale_factor = self.width / self.window_dimensions[0]
-		y_scale_factor = self.height / self.window_dimensions[1]
+		x_scale_factor = self.width / self.window_dims[0]
+		y_scale_factor = self.height / self.window_dims[1]
 		self.scale('all', 0, 0, x_scale_factor, y_scale_factor)
 		for entity in self.entities:
-			entity.scale(x_scale_factor, y_scale_factor, *ones(entity.dimension-2))
-		self.window_dimensions = (self.width, self.height)
+			entity.scale(x_scale_factor, y_scale_factor, *ones(entity.dim-2))
+		self.window_dims = (self.width, self.height)
+
+	def _on_B1_down(self, event):
+		self.mouse_coords = (event.x, event.y)
 
 	def _on_B1_drag(self, event):
-		...
+		x_drag_distance = event.x - self.mouse_coords[0]
+		y_drag_distance = event.y - self.mouse_coords[1]
+		xz_angle = 2*arcsin(x_drag_distance / (2*self.distance_from_center))
+		yz_angle = -2*arcsin(y_drag_distance / (2*self.distance_from_center))
+		for entity in self.entities:
+			entity.rotate3D(0, xz_angle, yz_angle)
+		self.mouse_coords = (event.x, event.y)
+
+	def _on_B2_down(self, event):
+		self.mouse_coords = (event.x, event.y)
 
 	def _on_B2_drag(self, event):
-		...
+		x_drag_distance = event.x - self.mouse_coords[0]
+		y_drag_distance = event.y - self.mouse_coords[1]
+		for entity in self.entities:
+			entity.translate3D(x_drag_distance, y_drag_distance, 0)
+		self.mouse_coords = (event.x, event.y)
+
+	def _on_scroll(self, event):
+		sensitivity = 0.1*(self.zoom_sensitivity/100)
+		zoom_factor = 1 + sensitivity if event.delta > 0 else 1 - sensitivity
+		for entity in self.entities:
+			entity.scale(*(zoom_factor*Vector(*ones(entity.dim))).components)
 
 	def clear_entities(self):
 		self.delete('all')
 
 	def run(self):
 		self.bind('<Configure>', self._on_window_resize)
+		self.bind('<Button-1>', self._on_B1_down)
 		self.bind('<B1-Motion>', self._on_B1_drag)
+		self.bind('<Button-2>', self._on_B2_down)
 		self.bind('<B2-Motion>', self._on_B2_drag)
+		self.bind('<MouseWheel>', self._on_scroll)
 		while True:
 			self.clear_entities()
 			self.render_all_entities()
