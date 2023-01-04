@@ -9,6 +9,9 @@ class Color:
 		self.__b = b
 		self.__a = a
 
+	def __repr__(self):
+		return f'Color({self.r}, {self.g}, {self.b}, {self.a})'
+
 	@staticmethod
 	def _format_rgb_value_as_hex_str(value):
 		if not isinstance(value, int):
@@ -46,3 +49,10 @@ class Color:
 
 WHITE = Color(255, 255, 255)
 BLACK = Color(0, 0, 0)
+GRAY = Color(100, 100, 100)
+RED = Color(255, 0, 0)
+ORANGE = Color(255, 87, 51)
+YELLOW = Color(255, 255, 102)
+PURPLE = Color(138, 43, 226)
+BLUE = Color(0, 0, 255)
+GREEN = Color(0, 255, 0)
