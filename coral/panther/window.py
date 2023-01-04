@@ -403,16 +403,15 @@ class Window(tk.Canvas):
 
 if __name__ == '__main__':
 
-	a, b, c, d = [Point(-100, 0, 0), Point(100, 0, 0), Point(0, 100, 0), (Point(0, 0, 100))]
+	A, B, C, D = [Point(20, 20, 0), Point(-20, 20, 0), Point(-20, -20, 0), Point(20, -20, 0)]
 
-	e = Entity(
-		[a, b, c, d],
-		[Line(a, b), Line(a, c), Line(b, c), Line(a, d), Line(b, d), Line(c, d)],
-		point_width=0,
-		point_color=WHITE
+	E = Entity3D(
+		[A, B, C, D],
+		triangles=[Triangle(A, B, C, fill=ORANGE), Triangle(C, D, A, fill=ORANGE)]
 	)
+	
 
 	w = Window(500, 500)
-	w.add_entities(e)
+	w.add_entities(E)
 	w.run()
 	w.perpetuate = False
