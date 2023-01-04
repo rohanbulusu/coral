@@ -40,6 +40,26 @@ class Point(Vector):
 			c*factor for c, factor in zip(self.components, scale_factors)
 		])
 
+	@staticmethod
+	def dist(a, b):
+		if not isinstance(a, Point):
+			raise TypeError(f'Expected Point object, got {typename(a)}')
+		if not isinstance(b, Point):
+			raise TypeError(f'Expected Point object, got {typename(b)}')
+		if not a.dim == b.dim:
+			raise ValueError(f'Expected two Point objects of the same dimension')
+		return sum((a[i]**2 - b[i]**2) for i in range(a.dim))**0.5
+
+	def rotate3D(self, xy_angle, xz_angle, yz_angle):
+		if self.dim != 3:
+			raise ValueError(f'Expected Vector to have dimension at least three')
+		self.components = tuple((
+			Rot3.xy(xy_angle)*Rot3.xz(xz_angle)*Rot3.yz(yz_angle)*self
+		).components)
+
+	def translate3D(self, x_delta, y_delta, z_delta):
+		self.components = tuple((self + Point(x_delta, y_delta, z_delta)).components)
+
 
 class Line:
 
