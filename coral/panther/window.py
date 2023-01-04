@@ -147,13 +147,11 @@ class Entity:
 
 	REGISTERED_ENTITY_IDS = []
 
-	def __init__(self, points, lines, fill=BLACK, border=BLACK, point_width=2, point_color=BLACK):
+	def __init__(self, points, lines=[], fill=BLACK, border=BLACK, point_width=2, point_color=BLACK):
 		if not isinstance(points, Sequence):
 			raise TypeError(f'Expected a Sequence of Point objects, not a {typename(points)}')
 		if not all(isinstance(point, Vector) for point in points):
 			raise TypeError(f'Expected all points to be of type Vector')
-		if not all(point.dim >= 3 or point.dim == 0 for point in points):
-			raise ValueError(f'Expected all points to have a dimension of at least three')
 		if not all(point.dim == points[0].dim for point in points):
 			raise ValueError(f'Expected all points to have the same dimension')
 		if not isinstance(lines, Sequence):
