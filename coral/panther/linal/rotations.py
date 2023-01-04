@@ -27,16 +27,16 @@ class ThreeDimensionalRotation:
 	@staticmethod
 	def xz(theta):
 		return Matrix(
-			[cos(theta), 0, -sin(theta)],
+			[cos(theta), 0, sin(theta)],
 			[0, 1, 0],
-			[sin(theta), 0, cos(theta)]
+			[-sin(theta), 0, cos(theta)]
 		)
 
 	@staticmethod
 	def yz(theta):
 		return Matrix(
+			[1, 0, 0],
 			[0, cos(theta), -sin(theta)],
-			[0, sin(theta), cos(theta)],
-			[1, 0, 0]
+			[0, sin(theta), cos(theta)]
 		)
 
