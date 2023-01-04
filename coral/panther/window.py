@@ -2,12 +2,13 @@
 import tkinter as tk
 import time
 from collections.abc import Sequence
+from math import asin as arcsin
 
 from coral.utils import typename, chain, zeros, ones
 
 from linal.vector import Vector
-from linal.rotations import ThreeDimensionalRotation
-from color import Color, WHITE, BLACK
+from linal.rotations import ThreeDimensionalRotation as Rot3
+from color import Color, WHITE, BLACK, GRAY, RED, ORANGE, YELLOW, PURPLE, BLUE, GREEN
 
 
 class Point(Vector):
@@ -76,7 +77,7 @@ class Line:
 
 	@property
 	def length(self):
-		return ((self.a[0] - self.b[0])**2 + (self.b[0]-self.a[0])**2)**0.5
+		return Point.dist(self.a, self.b)
 
 	def scale(self, *scale_factors):
 		if len(scale_factors) != self.dim:
